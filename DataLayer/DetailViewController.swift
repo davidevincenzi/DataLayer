@@ -27,7 +27,7 @@ class DetailViewController: UIViewController {
         configureView()
     }
 
-    var detailItem: Event? {
+    var detailItem: EventType? {
         didSet {
             // Update the view.
             configureView()
