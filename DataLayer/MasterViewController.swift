@@ -31,7 +31,12 @@ class MasterViewController: UITableViewController {
     }
     
     @objc private func insertNewObject() {
-        dataLayer?.createEvent()
+        var user = dataLayer?.createUser()
+        user?.name = String.random()
+        var event = dataLayer?.createEvent()
+        event?.creator = user
+        
+        dataLayer?.save()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,3 +94,13 @@ class MasterViewController: UITableViewController {
     }
 }
 
+extension String {
+    static func random() -> String {
+        let length = 15
+        let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let randomCharacters = (0..<length).map{_ in characters.randomElement()!}
+        let randomString = String(randomCharacters)
+        
+        return randomString
+    }
+}

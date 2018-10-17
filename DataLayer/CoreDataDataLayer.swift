@@ -83,23 +83,21 @@ class CoreDataDataLayer: NSObject, DataLayer {
     }
     var _fetchedResultsController: NSFetchedResultsController<Event>? = nil
     
-    @objc
-    private func insertNewObject() {
+    private func insertNewEvent() -> Event {
         let context = self.fetchedResultsController.managedObjectContext
         let newEvent = Event(context: context)
         
         // If appropriate, configure the new managed object.
         newEvent.timestamp = Date()
         
-        // Save the context.
-        do {
-            try context.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-        }
+        return newEvent
+    }
+    
+    private func insertNewUser() -> User {
+        let context = self.fetchedResultsController.managedObjectContext
+        let user = User(context: context)
+        
+        return user
     }
     
     func object(at indexPath: IndexPath) -> EventType {
@@ -111,8 +109,12 @@ class CoreDataDataLayer: NSObject, DataLayer {
         return fetchedResultsController.sections?.first?.numberOfObjects ?? 0
     }
     
-    func createEvent() {
-        insertNewObject()
+    func createEvent() -> EventType {
+        return insertNewEvent()
+    }
+    
+    func createUser() -> UserType {
+        return insertNewUser()
     }
     
     func deleteEvent(_ event: EventType) {
@@ -120,15 +122,10 @@ class CoreDataDataLayer: NSObject, DataLayer {
         
         let context = fetchedResultsController.managedObjectContext
         context.delete(event)
-        
-        do {
-            try context.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-        }
+    }
+    
+    func save() {
+        saveContext()
     }
 }
 

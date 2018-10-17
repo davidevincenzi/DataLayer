@@ -12,8 +12,10 @@ protocol DataLayer {
     
     func object(at indexPath: IndexPath) -> EventType
     func numberOfEvents() -> Int
-    func createEvent()
+    func createEvent() -> EventType
+    func createUser() -> UserType
     func deleteEvent(_ event: EventType)
+    func save()
 }
 
 protocol HasDataLayer {

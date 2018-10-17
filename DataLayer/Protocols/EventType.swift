@@ -9,4 +9,5 @@ import Foundation
 
 protocol EventType {
     var timestamp: Date? { get set }
+    var creator: UserType? { get set }
 }
