@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol EventType {
+protocol EventType: ThreadSafeType {
     var timestamp: Date? { get set }
     var user: UserType? { get set }
 }

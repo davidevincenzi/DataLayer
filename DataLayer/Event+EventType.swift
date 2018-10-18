@@ -22,16 +22,10 @@ extension Event: EventType {
     
     var timestamp: Date? {
         get {
-            var _timestamp: Date?
-            managedObjectContext?.performAndWait { [ weak self] in
-                _timestamp = self?.cd_timestamp
-            }
-            return _timestamp
+            return cd_timestamp
         }
         set {
-            managedObjectContext?.performAndWait { [ weak self] in
-                self?.cd_timestamp = newValue
-            }
+            cd_timestamp = newValue
         }
     }
 }

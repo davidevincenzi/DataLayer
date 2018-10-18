@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol UserType {
+protocol UserType: ThreadSafeType {
     var name: String? { get set }
 }

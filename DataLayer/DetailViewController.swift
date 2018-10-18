@@ -44,7 +44,9 @@ class DetailViewController: UIViewController {
     
     @IBAction func backgroundButtonAction(_ sender: Any) {
         DispatchQueue.global(qos: .background).async {
-            print("Date: \(String(describing: self.detailItem?.timestamp))")
+            self.detailItem?.executeThreadSafe {
+                print("Date: \(String(describing: self.detailItem?.timestamp))")
+            }
         }
     }
     
