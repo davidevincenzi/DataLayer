@@ -58,12 +58,21 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e5K-kt-5py">
+                                <rect key="frame" x="161" y="384" width="53" height="30"/>
+                                <state key="normal" title="Refresh"/>
+                                <connections>
+                                    <action selector="refreshButtonAction:" destination="JEX-9P-axG" eventType="touchUpInside" id="taq-Z7-V9a"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="51U-0V-8nv" firstAttribute="top" secondItem="HO6-p6-bA4" secondAttribute="bottom" constant="7.5" id="3TE-Id-j6h"/>
                             <constraint firstItem="mol-8K-uKK" firstAttribute="centerX" secondItem="svH-Pt-448" secondAttribute="centerX" id="MB0-Dr-K90"/>
                             <constraint firstItem="0XM-y9-sOw" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="20" symbolic="YES" id="Tsc-yG-G1q"/>
+                            <constraint firstItem="e5K-kt-5py" firstAttribute="centerX" secondItem="VUw-jc-0yf" secondAttribute="centerX" id="alJ-Z5-05O"/>
+                            <constraint firstItem="e5K-kt-5py" firstAttribute="top" secondItem="0XM-y9-sOw" secondAttribute="bottom" constant="40" id="bHb-PH-APw"/>
                             <constraint firstItem="0XM-y9-sOw" firstAttribute="centerY" secondItem="svH-Pt-448" secondAttribute="centerY" id="jWN-iV-94e"/>
                             <constraint firstItem="51U-0V-8nv" firstAttribute="centerX" secondItem="svH-Pt-448" secondAttribute="centerX" id="pDm-gv-Baa"/>
                             <constraint firstItem="0XM-y9-sOw" firstAttribute="top" secondItem="HO6-p6-bA4" secondAttribute="bottom" constant="80" id="sA9-OU-QEE"/>

@@ -85,6 +85,7 @@ class MasterViewController: UITableViewController {
         if editingStyle == .delete {
             if let event = dataLayer?.object(at: indexPath) {
                 dataLayer?.deleteEvent(event)
+                dataLayer?.save()
             }
         }
     }

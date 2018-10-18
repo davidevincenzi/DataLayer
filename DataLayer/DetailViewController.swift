@@ -38,6 +38,9 @@ class DetailViewController: UIViewController {
         }
     }
 
-
+    @IBAction func refreshButtonAction(_ sender: Any) {
+        configureView()
+    }
+    
 }
 
