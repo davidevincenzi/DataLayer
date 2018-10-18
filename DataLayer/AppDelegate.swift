@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
         let masterNavigationController = splitViewController.viewControllers[0] as! UINavigationController
         let controller = masterNavigationController.topViewController as! MasterViewController
-        controller.dataLayer = CoreDataDataLayer()
+        controller.dataLayer = CoreDataWithStructsDataLayer()
         return true
     }
 

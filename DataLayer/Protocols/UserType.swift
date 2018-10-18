@@ -8,5 +8,5 @@
 import Foundation
 
 protocol UserType {
-    var name: String? { get set }
+    var name: String? { get }
 }

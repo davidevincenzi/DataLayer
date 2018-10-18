@@ -31,11 +31,7 @@ class MasterViewController: UITableViewController {
     }
     
     @objc private func insertNewObject() {
-        var user = dataLayer?.createUser()
-        user?.name = String.random()
-        var event = dataLayer?.createEvent()
-        event?.creator = user
-        
+        dataLayer?.createEvent(creator: String.random())
         dataLayer?.save()
     }
     
@@ -51,6 +47,7 @@ class MasterViewController: UITableViewController {
             if let indexPath = tableView.indexPathForSelectedRow {
             let object = dataLayer?.object(at: indexPath)
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                controller.dataLayer = dataLayer
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true

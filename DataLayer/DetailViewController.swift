@@ -12,17 +12,12 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     @IBOutlet weak var userLabel: UILabel!
     
-
+    var dataLayer: DataLayer?
+    
     func configureView() {
         // Update the user interface for the detail item.
-        if let detail = detailItem {
-            if let detailDescriptionLabel = self.detailDescriptionLabel {
-                detailDescriptionLabel.text = detail.timestamp!.description
-            }
-            if let userLabel = self.userLabel {
-                userLabel.text = detail.creator?.name
-            }
-        }
+        detailDescriptionLabel?.text = detailItem?.timestamp?.description
+        userLabel?.text = userItem?.name
     }
 
     override func viewDidLoad() {
@@ -31,9 +26,15 @@ class DetailViewController: UIViewController {
         configureView()
     }
 
+    var userItem: UserType?
+    
     var detailItem: EventType? {
         didSet {
-            // Update the view.
+            if let detail = detailItem {
+                userItem = dataLayer?.userOfEvent(detail)
+            } else {
+                userItem = nil
+            }
             configureView()
         }
     }
