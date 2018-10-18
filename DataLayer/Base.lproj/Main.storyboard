@@ -59,16 +59,25 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e5K-kt-5py">
-                                <rect key="frame" x="161" y="384" width="53" height="30"/>
-                                <state key="normal" title="Refresh"/>
+                                <rect key="frame" x="136" y="384" width="103" height="30"/>
+                                <state key="normal" title="Refresh screen"/>
                                 <connections>
                                     <action selector="refreshButtonAction:" destination="JEX-9P-axG" eventType="touchUpInside" id="taq-Z7-V9a"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6R7-5E-idj">
+                                <rect key="frame" x="120.5" y="422" width="134" height="30"/>
+                                <state key="normal" title="Background access"/>
+                                <connections>
+                                    <action selector="backgroundButtonAction:" destination="JEX-9P-axG" eventType="touchUpInside" id="hf1-pM-h0J"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="6R7-5E-idj" firstAttribute="top" secondItem="e5K-kt-5py" secondAttribute="bottom" constant="8" id="0em-TJ-Dsb"/>
                             <constraint firstItem="51U-0V-8nv" firstAttribute="top" secondItem="HO6-p6-bA4" secondAttribute="bottom" constant="7.5" id="3TE-Id-j6h"/>
+                            <constraint firstItem="6R7-5E-idj" firstAttribute="centerX" secondItem="VUw-jc-0yf" secondAttribute="centerX" id="7BL-e2-spM"/>
                             <constraint firstItem="mol-8K-uKK" firstAttribute="centerX" secondItem="svH-Pt-448" secondAttribute="centerX" id="MB0-Dr-K90"/>
                             <constraint firstItem="0XM-y9-sOw" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="20" symbolic="YES" id="Tsc-yG-G1q"/>
                             <constraint firstItem="e5K-kt-5py" firstAttribute="centerX" secondItem="VUw-jc-0yf" secondAttribute="centerX" id="alJ-Z5-05O"/>
