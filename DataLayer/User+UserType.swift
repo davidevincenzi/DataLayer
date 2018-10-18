@@ -8,5 +8,14 @@
 import Foundation
 
 extension User: UserType {
+    var name: String? {
+        get {
+            return cd_name
+        }
+        set {
+            self.cd_name = newValue
+        }
+    }
+    
     
 }

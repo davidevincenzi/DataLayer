@@ -36,6 +36,7 @@
 /* Begin PBXFileReference section */
 		6B00FB7C217721F500F39536 /* UserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserType.swift; sourceTree = "<group>"; };
 		6B00FB7E2177221D00F39536 /* User+UserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+UserType.swift"; sourceTree = "<group>"; };
+		6B0F55752178E0ED00CCDF5D /* DataLayer 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DataLayer 3.xcdatamodel"; sourceTree = "<group>"; };
 		6B1E5F3A217475BF00950DC5 /* DataLayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataLayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B1E5F3D217475BF00950DC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6B1E5F40217475BF00950DC5 /* DataLayer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataLayer.xcdatamodel; sourceTree = "<group>"; };
@@ -506,10 +507,11 @@
 		6B1E5F3F217475BF00950DC5 /* DataLayer.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				6B0F55752178E0ED00CCDF5D /* DataLayer 3.xcdatamodel */,
 				6B4C74BC21771D1400198A73 /* DataLayer 2.xcdatamodel */,
 				6B1E5F40217475BF00950DC5 /* DataLayer.xcdatamodel */,
 			);
-			currentVersion = 6B4C74BC21771D1400198A73 /* DataLayer 2.xcdatamodel */;
+			currentVersion = 6B0F55752178E0ED00CCDF5D /* DataLayer 3.xcdatamodel */;
 			path = DataLayer.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

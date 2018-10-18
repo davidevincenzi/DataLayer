@@ -34,7 +34,7 @@ class MasterViewController: UITableViewController {
         var user = dataLayer?.createUser()
         user?.name = String.random()
         var event = dataLayer?.createEvent()
-        event?.creator = user
+        event?.user = user
         
         dataLayer?.save()
     }

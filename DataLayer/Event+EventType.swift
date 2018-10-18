@@ -8,13 +8,29 @@
 import Foundation
 
 extension Event: EventType {
-    var creator: UserType? {
+    
+    var user: UserType? {
         get {
-            return user
+            return cd_user
         }
         set {
             if let user = newValue as? User {
-                self.user = user
+                self.cd_user = user
+            }
+        }
+    }
+    
+    var timestamp: Date? {
+        get {
+            var _timestamp: Date?
+            managedObjectContext?.performAndWait { [ weak self] in
+                _timestamp = self?.cd_timestamp
+            }
+            return _timestamp
+        }
+        set {
+            managedObjectContext?.performAndWait { [ weak self] in
+                self?.cd_timestamp = newValue
             }
         }
     }

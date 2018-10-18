@@ -60,7 +60,7 @@ class CoreDataDataLayer: NSObject, DataLayer {
         fetchRequest.fetchBatchSize = 20
         
         // Edit the sort key as appropriate.
-        let sortDescriptor = NSSortDescriptor(key: "timestamp", ascending: false)
+        let sortDescriptor = NSSortDescriptor(key: "cd_timestamp", ascending: false)
         
         fetchRequest.sortDescriptors = [sortDescriptor]
         

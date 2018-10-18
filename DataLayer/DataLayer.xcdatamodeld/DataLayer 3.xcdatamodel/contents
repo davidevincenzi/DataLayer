@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14315.18" systemVersion="18B45d" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Event" representedClassName="Event" codeGenerationType="class">
+        <attribute name="cd_timestamp" optional="YES" attributeType="Date">
+            <userInfo/>
+        </attribute>
+        <relationship name="cd_user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="cd_events" inverseEntity="User" syncable="YES"/>
+        <userInfo/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
+        <attribute name="cd_name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="cd_events" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="cd_user" inverseEntity="Event" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Event" positionX="261" positionY="189" width="128" height="75"/>
+        <element name="User" positionX="261" positionY="198" width="128" height="75"/>
+    </elements>
+</model>

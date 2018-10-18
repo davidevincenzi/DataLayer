@@ -20,7 +20,7 @@ class DetailViewController: UIViewController {
                 detailDescriptionLabel.text = detail.timestamp!.description
             }
             if let userLabel = self.userLabel {
-                userLabel.text = detail.creator?.name
+                userLabel.text = detail.user?.name
             }
         }
     }
