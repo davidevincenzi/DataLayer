@@ -8,44 +8,37 @@
 import Foundation
 import CoreData
 
+struct EventStruct: EventType {
+    var timestamp: Date?
+    var event: Event
+    
+    init(event: Event) {
+        timestamp = event.timestamp
+        self.event = event
+    }
+}
+
+struct UserStruct: UserType {
+    var name: String?
+    var user: User
+    
+    init(user: User) {
+        name = user.name
+        self.user = user
+    }
+}
+
 class CoreDataWithStructsDataLayer: DataLayer {
-  
-    struct EventStruct: EventType {
-        var timestamp: Date?
-        var event: Event
-        
-        init(event: Event) {
-            timestamp = event.timestamp
-            self.event = event
-        }
-    }
-    
-    struct UserStruct: UserType {
-        var name: String?
-        var user: User
-        
-        init(user: User) {
-            name = user.name
-            self.user = user
-        }
-    }
-    
-    var dataChanged: (() -> Void)?
-    
-    private var allEvents: [EventStruct]
     
     init() {
-        allEvents = []
-        loadEvents()
         
-        let context = persistentContainer.viewContext
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(viewContextSaved),
-                                               name: NSNotification.Name.NSManagedObjectContextDidSave,
-                                               object: context)
     }
     
-    private func loadEvents() {
+    var moc: NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
+    
+    func loadEvents() -> [Event] {
         let context = persistentContainer.viewContext
         
         let fetchRequest: NSFetchRequest<Event> = Event.fetchRequest()
@@ -56,23 +49,10 @@ class CoreDataWithStructsDataLayer: DataLayer {
             try events = context.fetch(fetchRequest)
         } catch {
             print("Error: \(error)")
-            return
+            events = []
         }
         
-        // Instead of overwriting allEvents we could calculate the diff here
-        // and notify which events exactly were created/deleted/updated
-        // so we can make use of partial table reload (and cell animations)
-        allEvents = events.map({ EventStruct(event: $0) })
-        
-        dataChanged?()
-    }
-    
-    func numberOfEvents() -> Int {
-        return allEvents.count
-    }
-    
-    func object(at indexPath: IndexPath) -> EventType {
-        return allEvents[indexPath.row]
+        return events
     }
     
     func createEvent(creator: String) {
@@ -86,19 +66,17 @@ class CoreDataWithStructsDataLayer: DataLayer {
         newEvent.user = user
     }
     
-    func deleteEvent(_ event: EventType) {
-        guard let eventStruct = event as? EventStruct else { fatalError("Event must be an EventStruct") }
-        
+    func deleteEvent(_ event: Event) {
         let context = persistentContainer.viewContext
-        context.delete(eventStruct.event)
+        context.delete(event)
     }
     
-    func userOfEvent(_ event: EventType) -> UserType? {
-        guard let eventStruct = event as? EventStruct else { fatalError("Event must be an EventStruct") }
-        guard let user = eventStruct.event.user else { return nil }
-        
-        let userStruct = UserStruct(user: user)
-        return userStruct
+    func updateEvent(_ event: Event, timestamp: Date) {
+        event.timestamp = timestamp
+    }
+    
+    func userOfEvent(_ event: Event) -> User? {
+        return event.user
     }
     
     func save() {
@@ -117,10 +95,6 @@ class CoreDataWithStructsDataLayer: DataLayer {
         return container
     }()
     
-    @objc private func viewContextSaved() {
-        loadEvents()
-    }
-    
     // MARK: - Core Data Saving support
     
     private func saveContext () {
@@ -137,5 +111,4 @@ class CoreDataWithStructsDataLayer: DataLayer {
         }
     }
     
-
 }

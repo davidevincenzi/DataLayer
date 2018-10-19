@@ -11,7 +11,7 @@ import CoreData
 class MasterViewController: UITableViewController {
     
     var detailViewController: DetailViewController? = nil
-    var dataLayer: DataLayer?
+    var dataLayer: MasterViewDataLayer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +32,6 @@ class MasterViewController: UITableViewController {
     
     @objc private func insertNewObject() {
         dataLayer?.createEvent(creator: String.random())
-        dataLayer?.save()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,11 +43,10 @@ class MasterViewController: UITableViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
-            let object = dataLayer?.object(at: indexPath)
+            if let indexPath = tableView.indexPathForSelectedRow,
+                let object = dataLayer?.object(at: indexPath) {
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.dataLayer = dataLayer
-                controller.detailItem = object
+                controller.dataLayer = dataLayer?.detailViewDataLayerForEvent(object)
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
@@ -82,7 +80,6 @@ class MasterViewController: UITableViewController {
         if editingStyle == .delete {
             if let event = dataLayer?.object(at: indexPath) {
                 dataLayer?.deleteEvent(event)
-                dataLayer?.save()
             }
         }
     }

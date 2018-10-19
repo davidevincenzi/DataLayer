@@ -6,18 +6,14 @@
 //
 
 import Foundation
+import CoreData
 
 protocol DataLayer {
-    var dataChanged: (() -> Void)? { get set }
-    
-    func numberOfEvents() -> Int
-    func object(at indexPath: IndexPath) -> EventType
+    var moc: NSManagedObjectContext { get }
+    func loadEvents() -> [Event]
     func createEvent(creator: String)
-    func deleteEvent(_ event: EventType)
-    func userOfEvent(_ event: EventType) -> UserType?
+    func deleteEvent(_ event: Event)
+    func updateEvent(_ event: Event, timestamp: Date)
+    func userOfEvent(_ event: Event) -> User?
     func save()
-}
-
-protocol HasDataLayer {
-    var dataLayer: DataLayer { get }
 }

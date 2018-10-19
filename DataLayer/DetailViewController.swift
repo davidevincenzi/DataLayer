@@ -12,37 +12,26 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     @IBOutlet weak var userLabel: UILabel!
     
-    var dataLayer: DataLayer?
+    var dataLayer: DetailViewDataLayer?
     
     func configureView() {
         // Update the user interface for the detail item.
-        detailDescriptionLabel?.text = detailItem?.timestamp?.description
-        userLabel?.text = userItem?.name
+        detailDescriptionLabel?.text = dataLayer?.detailItem?.timestamp?.description
+        userLabel?.text = dataLayer?.userItem?.name
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        configureView()
-    }
-
-    var userItem: UserType?
-    
-    var detailItem: EventType? {
-        didSet {
-            if let detail = detailItem {
-                userItem = dataLayer?.userOfEvent(detail)
-            } else {
-                userItem = nil
-            }
-            configureView()
+        dataLayer?.dataChanged = { [weak self] in
+            self?.configureView()
         }
+        configureView()
     }
 
     @IBAction func updateTimestampAndRefresh(_ sender: Any) {
-        // TODO
-        //detailItem?.timestamp = Date()
-        configureView()
+        let newDate = Date()
+        dataLayer?.updateEvent(timestamp: newDate)
     }
     
     @IBAction func refreshButtonAction(_ sender: Any) {
@@ -51,7 +40,7 @@ class DetailViewController: UIViewController {
     
     @IBAction func backgroundButtonAction(_ sender: Any) {
         DispatchQueue.global(qos: .background).async {
-            print("Date: \(String(describing: self.detailItem?.timestamp))")
+            print("Date: \(String(describing: self.dataLayer?.detailItem?.timestamp))")
         }
     }
     
