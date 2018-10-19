@@ -39,6 +39,12 @@ class DetailViewController: UIViewController {
         }
     }
 
+    @IBAction func updateTimestampAndRefresh(_ sender: Any) {
+        // TODO
+        //detailItem?.timestamp = Date()
+        configureView()
+    }
+    
     @IBAction func refreshButtonAction(_ sender: Any) {
         configureView()
     }

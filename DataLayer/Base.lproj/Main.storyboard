@@ -72,12 +72,21 @@
                                     <action selector="backgroundButtonAction:" destination="JEX-9P-axG" eventType="touchUpInside" id="hf1-pM-h0J"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4ad-qf-sZT">
+                                <rect key="frame" x="83" y="460" width="209" height="30"/>
+                                <state key="normal" title="Update timestamp and refresh"/>
+                                <connections>
+                                    <action selector="updateTimestampAndRefresh:" destination="JEX-9P-axG" eventType="touchUpInside" id="KfD-7s-GWi"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="6R7-5E-idj" firstAttribute="top" secondItem="e5K-kt-5py" secondAttribute="bottom" constant="8" id="0em-TJ-Dsb"/>
                             <constraint firstItem="51U-0V-8nv" firstAttribute="top" secondItem="HO6-p6-bA4" secondAttribute="bottom" constant="7.5" id="3TE-Id-j6h"/>
                             <constraint firstItem="6R7-5E-idj" firstAttribute="centerX" secondItem="VUw-jc-0yf" secondAttribute="centerX" id="7BL-e2-spM"/>
+                            <constraint firstItem="4ad-qf-sZT" firstAttribute="centerX" secondItem="svH-Pt-448" secondAttribute="centerX" id="HWd-mI-tIX"/>
+                            <constraint firstItem="4ad-qf-sZT" firstAttribute="top" secondItem="6R7-5E-idj" secondAttribute="bottom" constant="8" id="J8R-1o-jjq"/>
                             <constraint firstItem="mol-8K-uKK" firstAttribute="centerX" secondItem="svH-Pt-448" secondAttribute="centerX" id="MB0-Dr-K90"/>
                             <constraint firstItem="0XM-y9-sOw" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leading" constant="20" symbolic="YES" id="Tsc-yG-G1q"/>
                             <constraint firstItem="e5K-kt-5py" firstAttribute="centerX" secondItem="VUw-jc-0yf" secondAttribute="centerX" id="alJ-Z5-05O"/>
