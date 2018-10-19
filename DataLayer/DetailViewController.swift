@@ -42,6 +42,11 @@ class DetailViewController: UIViewController {
         configureView()
     }
     
+    @IBAction func updateTimestampAndRefresh(_ sender: Any) {
+        self.detailItem?.timestamp = Date()
+        configureView()
+    }
+    
     @IBAction func backgroundButtonAction(_ sender: Any) {
         DispatchQueue.global(qos: .background).async {
             self.detailItem?.executeThreadSafe {
