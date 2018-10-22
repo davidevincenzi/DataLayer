@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2889C440217B530C0059F16B /* Storable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C43F217B530C0059F16B /* Storable.swift */; };
+		2889C442217B53BA0059F16B /* StorageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C441217B53BA0059F16B /* StorageContext.swift */; };
+		2889C446217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C445217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift */; };
+		2889C448217B59090059F16B /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C447217B59090059F16B /* Errors.swift */; };
+		2889C44D217DC5E60059F16B /* PersistenceStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C44C217DC5E60059F16B /* PersistenceStack.swift */; };
+		2889C44F217DCE910059F16B /* CoreDataPersistenceStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C44E217DCE910059F16B /* CoreDataPersistenceStack.swift */; };
+		2889C452217DDA060059F16B /* ResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C451217DDA060059F16B /* ResultsController.swift */; };
+		2889C456217DDA770059F16B /* RealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C455217DDA770059F16B /* RealmResultsController.swift */; };
+		2889C458217DDB940059F16B /* CoreDataResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C457217DDB940059F16B /* CoreDataResultsController.swift */; };
 		6B00FB7D217721F500F39536 /* UserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B00FB7C217721F500F39536 /* UserType.swift */; };
 		6B00FB7F2177221D00F39536 /* User+UserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B00FB7E2177221D00F39536 /* User+UserType.swift */; };
 		6B1E5F3E217475BF00950DC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B1E5F3D217475BF00950DC5 /* AppDelegate.swift */; };
@@ -34,6 +43,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2889C43F217B530C0059F16B /* Storable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storable.swift; sourceTree = "<group>"; };
+		2889C441217B53BA0059F16B /* StorageContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageContext.swift; sourceTree = "<group>"; };
+		2889C445217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+StorageContext.swift"; sourceTree = "<group>"; };
+		2889C447217B59090059F16B /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		2889C44C217DC5E60059F16B /* PersistenceStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceStack.swift; sourceTree = "<group>"; };
+		2889C44E217DCE910059F16B /* CoreDataPersistenceStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPersistenceStack.swift; sourceTree = "<group>"; };
+		2889C451217DDA060059F16B /* ResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsController.swift; sourceTree = "<group>"; };
+		2889C455217DDA770059F16B /* RealmResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmResultsController.swift; sourceTree = "<group>"; };
+		2889C457217DDB940059F16B /* CoreDataResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataResultsController.swift; sourceTree = "<group>"; };
 		6B00FB7C217721F500F39536 /* UserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserType.swift; sourceTree = "<group>"; };
 		6B00FB7E2177221D00F39536 /* User+UserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+UserType.swift"; sourceTree = "<group>"; };
 		6B0F55752178E0ED00CCDF5D /* DataLayer 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DataLayer 3.xcdatamodel"; sourceTree = "<group>"; };
@@ -74,6 +92,90 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2889C43E217B52AD0059F16B /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				6B1E5F42217475BF00950DC5 /* MasterViewController.swift */,
+				6B1E5F44217475BF00950DC5 /* DetailViewController.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		2889C443217B542F0059F16B /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				2889C43F217B530C0059F16B /* Storable.swift */,
+				2889C441217B53BA0059F16B /* StorageContext.swift */,
+				2889C44C217DC5E60059F16B /* PersistenceStack.swift */,
+				2889C44A217DC2F00059F16B /* Core Data */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		2889C444217B54F70059F16B /* UI Data Layer (will change this!) */ = {
+			isa = PBXGroup;
+			children = (
+				6B1E5F682174787C00950DC5 /* CoreDataDataLayer.swift */,
+				6B1E5F622174764600950DC5 /* DataLayer.swift */,
+			);
+			path = "UI Data Layer (will change this!)";
+			sourceTree = "<group>";
+		};
+		2889C449217DC16E0059F16B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6B1E5F64217476C500950DC5 /* EventType.swift */,
+				6B00FB7C217721F500F39536 /* UserType.swift */,
+				6B1E5F6A2174841100950DC5 /* Core Data */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2889C44A217DC2F00059F16B /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				2889C445217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift */,
+				2889C44E217DCE910059F16B /* CoreDataPersistenceStack.swift */,
+			);
+			path = "Core Data";
+			sourceTree = "<group>";
+		};
+		2889C44B217DC5A20059F16B /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				2889C450217DD9F00059F16B /* UI (ResultController) */,
+				2889C449217DC16E0059F16B /* Model */,
+				2889C443217B542F0059F16B /* Persistence */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		2889C450217DD9F00059F16B /* UI (ResultController) */ = {
+			isa = PBXGroup;
+			children = (
+				2889C451217DDA060059F16B /* ResultsController.swift */,
+				2889C453217DDA580059F16B /* CoreData */,
+				2889C454217DDA5E0059F16B /* Realm */,
+			);
+			name = "UI (ResultController)";
+			sourceTree = "<group>";
+		};
+		2889C453217DDA580059F16B /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				2889C457217DDB940059F16B /* CoreDataResultsController.swift */,
+			);
+			name = CoreData;
+			sourceTree = "<group>";
+		};
+		2889C454217DDA5E0059F16B /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				2889C455217DDA770059F16B /* RealmResultsController.swift */,
+			);
+			name = Realm;
+			sourceTree = "<group>";
+		};
 		6B1E5F31217475BF00950DC5 = {
 			isa = PBXGroup;
 			children = (
@@ -96,12 +198,10 @@
 			isa = PBXGroup;
 			children = (
 				6B1E5F3D217475BF00950DC5 /* AppDelegate.swift */,
-				6B1E5F682174787C00950DC5 /* CoreDataDataLayer.swift */,
-				6B1E5F42217475BF00950DC5 /* MasterViewController.swift */,
-				6B1E5F44217475BF00950DC5 /* DetailViewController.swift */,
-				6B1E5F662174773100950DC5 /* Event+EventType.swift */,
-				6B00FB7E2177221D00F39536 /* User+UserType.swift */,
-				6B1E5F6A2174841100950DC5 /* Protocols */,
+				2889C43E217B52AD0059F16B /* UI */,
+				2889C444217B54F70059F16B /* UI Data Layer (will change this!) */,
+				2889C44B217DC5A20059F16B /* Persistence */,
+				2889C447217B59090059F16B /* Errors.swift */,
 				6B1E5F46217475BF00950DC5 /* Main.storyboard */,
 				6B1E5F49217475C200950DC5 /* Assets.xcassets */,
 				6B1E5F4B217475C200950DC5 /* LaunchScreen.storyboard */,
@@ -120,14 +220,13 @@
 			path = DataLayerTests;
 			sourceTree = "<group>";
 		};
-		6B1E5F6A2174841100950DC5 /* Protocols */ = {
+		6B1E5F6A2174841100950DC5 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
-				6B1E5F622174764600950DC5 /* DataLayer.swift */,
-				6B1E5F64217476C500950DC5 /* EventType.swift */,
-				6B00FB7C217721F500F39536 /* UserType.swift */,
+				6B1E5F662174773100950DC5 /* Event+EventType.swift */,
+				6B00FB7E2177221D00F39536 /* User+UserType.swift */,
 			);
-			path = Protocols;
+			path = "Core Data";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,8 +331,17 @@
 			files = (
 				6B1E5F3E217475BF00950DC5 /* AppDelegate.swift in Sources */,
 				6B00FB7F2177221D00F39536 /* User+UserType.swift in Sources */,
+				2889C456217DDA770059F16B /* RealmResultsController.swift in Sources */,
 				6B1E5F632174764600950DC5 /* DataLayer.swift in Sources */,
+				2889C440217B530C0059F16B /* Storable.swift in Sources */,
+				2889C446217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift in Sources */,
 				6B1E5F672174773100950DC5 /* Event+EventType.swift in Sources */,
+				2889C448217B59090059F16B /* Errors.swift in Sources */,
+				2889C44F217DCE910059F16B /* CoreDataPersistenceStack.swift in Sources */,
+				2889C452217DDA060059F16B /* ResultsController.swift in Sources */,
+				2889C458217DDB940059F16B /* CoreDataResultsController.swift in Sources */,
+				2889C442217B53BA0059F16B /* StorageContext.swift in Sources */,
+				2889C44D217DC5E60059F16B /* PersistenceStack.swift in Sources */,
 				6B1E5F41217475BF00950DC5 /* DataLayer.xcdatamodeld in Sources */,
 				6B1E5F692174787C00950DC5 /* CoreDataDataLayer.swift in Sources */,
 				6B00FB7D217721F500F39536 /* UserType.swift in Sources */,
