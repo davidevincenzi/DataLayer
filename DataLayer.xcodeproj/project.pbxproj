@@ -54,6 +54,7 @@
 		6B1E5F662174773100950DC5 /* Event+EventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Event+EventType.swift"; sourceTree = "<group>"; };
 		6B1E5F682174787C00950DC5 /* CoreDataDataLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataDataLayer.swift; sourceTree = "<group>"; };
 		6B4C74BC21771D1400198A73 /* DataLayer 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DataLayer 2.xcdatamodel"; sourceTree = "<group>"; };
+		6BC4BA58217E07BC00715754 /* ProtocolAdoption.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ProtocolAdoption.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +96,7 @@
 		6B1E5F3C217475BF00950DC5 /* DataLayer */ = {
 			isa = PBXGroup;
 			children = (
+				6BC4BA58217E07BC00715754 /* ProtocolAdoption.playground */,
 				6B1E5F3D217475BF00950DC5 /* AppDelegate.swift */,
 				6B1E5F682174787C00950DC5 /* CoreDataDataLayer.swift */,
 				6B1E5F42217475BF00950DC5 /* MasterViewController.swift */,
