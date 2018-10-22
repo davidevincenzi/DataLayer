@@ -17,7 +17,7 @@ class DetailViewController: UIViewController {
         // Update the user interface for the detail item.
         if let detail = detailItem {
             if let detailDescriptionLabel = self.detailDescriptionLabel {
-                detailDescriptionLabel.text = detail.timestamp!.description
+                detailDescriptionLabel.text = detail.timestamp?.description ?? "-"
             }
             if let userLabel = self.userLabel {
                 userLabel.text = detail.user?.name

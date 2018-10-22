@@ -10,11 +10,19 @@ import CoreData
 
 /// Protocol for storable objects (e.g., Core Data NSManagedObject, Realm Object)
 protocol Storable {
-
+    static var entityName: String { get }
 }
 
 /// Core Data `NSManagedObject` compliance to `Storable` protocol.
-extension NSManagedObject: Storable {}
+extension NSManagedObject: Storable {
+    static var entityName: String {
+        return self.entity().name!
+    }
+}
 
 /// Realm `Object` compliance to `Storable` protocol.
-//extension Object: Storable {}
+//extension Object: Storable {
+//    var entityName: String {
+//        return ______
+//    }
+//}

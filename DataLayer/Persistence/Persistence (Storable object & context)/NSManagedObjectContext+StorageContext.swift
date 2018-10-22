@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 
 extension NSManagedObjectContext: ReadableStorageContext {
-    
+   
     func loadObject<T>(withId id: AnyObject) -> T? where T : Storable {
         guard let objectID = id as? NSManagedObjectID else {
             print("`id` is not an `NSManagedObjectID`.")
@@ -19,14 +19,7 @@ extension NSManagedObjectContext: ReadableStorageContext {
         return object(with: objectID) as? T
     }
     
-    func fetch<T>(_ model: T.Type, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ())) where T : Storable {
-        guard
-            let MO = model as? NSManagedObject.Type,
-            let entityName = MO.entity().name else {
-                print("`model` is not of `NSManagedObject` type.")
-                return
-        }
-        
+    func fetch<T>(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ())) where T : Storable {
         perform {
             // build fetch request
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
@@ -55,18 +48,19 @@ extension NSManagedObjectContext: ReadableStorageContext {
 
 extension NSManagedObjectContext: WritableStorageContext {
     
-    func create<T>(_ model: T.Type, completion: @escaping ((T) -> Void)) throws where T : Storable {
-        guard let MO = model as? NSManagedObject.Type else {
-            throw DataLayerError.persistence("`model` is not of type `NSManagedObject` type.")
+    func create(_ entityName: String, completion: @escaping ((Storable) -> Void)) throws {
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: entityName, in: self) else {
+            throw DataLayerError.persistence("Unable to get entity description for \(entityName)")
         }
         
         perform {
-            let newObject = MO.init(context: self) as! T
+            //let newObject = MO.init(context: self) as! T
+            let newObject = NSManagedObject(entity: entityDescription, insertInto: self) as Storable
             completion(newObject)
         }
     }
     
-    func save(object: Storable) throws {
+    func saveContext() throws {
         if hasChanges {
             try save()
         }
@@ -78,20 +72,14 @@ extension NSManagedObjectContext: WritableStorageContext {
         }
     }
     
-    func delete(object: Storable) throws {
+    func delete(_ object: Storable) throws {
         guard let managedObject = object as? NSManagedObject else {
             throw DataLayerError.persistence("`object` is not an `NSManagedObject`.")
         }
         delete(managedObject)
     }
     
-    func deleteAll<T>(_ model: T.Type) throws where T : Storable {
-        guard
-            let MO = model as? NSManagedObject.Type,
-            let entityName = MO.entity().name else {
-                throw DataLayerError.persistence("`model` is not of type `NSManagedObject` type.")
-        }
-        
+    func deleteAll(_ entityName: String) throws {
         perform { [weak self] in
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
@@ -99,7 +87,7 @@ extension NSManagedObjectContext: WritableStorageContext {
             do {
                 try self?.execute(deleteRequest)
             } catch {
-                print("Failed to delete all objects of type `\(model)` with error: \(error)")
+                print("Failed to delete all objects of entity name `\(entityName)` with error: \(error)")
             }
         }
     }

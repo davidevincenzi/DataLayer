@@ -25,24 +25,31 @@ class MasterViewController: UITableViewController {
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
         
-        resultsController = dataLayer?.makeResultsController(Event.self, sorted: Sorted(key: "cd_timestamp", ascending: false))
+        // setup a results controller
+        // FIXME: `cd_timestamp` is Core Data specific
+        resultsController = dataLayer?.makeResultsController(StorableEntity.event.rawValue, predicate: nil, sorted: Sorted(key: "cd_timestamp", ascending: false))
         resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }
     }
     
     @objc private func insertNewObject() {
-//        var user = dataLayer?.writableContext.create(User.Type, completion: { storable in
-//            guard let user = storable as? UserType else { return }
-//            user?.name = String.random()
-//        })
-        
-        var user = dataLayer?.createUser()
-        user?.name = String.random()
-        var event = dataLayer?.createEvent()
-        event?.user = user
-        
-        dataLayer?.save()
+        do {
+            try dataLayer?.writableContext.create(StorableEntity.user.rawValue, completion: { [weak self] storable in
+                var user = storable as? UserType
+                user?.name = String.random()
+                
+                try? self?.dataLayer?.writableContext.create(StorableEntity.event.rawValue, completion: { (storable) in
+                    var event = storable as? EventType
+                    event?.timestamp = Date()
+                    event?.user = user
+                    
+                    try? self?.dataLayer?.writableContext.saveContext()
+                })
+            })
+        } catch {
+            print("Failed to create a new user & event: \(error)")
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,8 +61,8 @@ class MasterViewController: UITableViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
-            let object = dataLayer?.object(at: indexPath)
+            if let indexPath = tableView.indexPathForSelectedRow,
+               let object = resultsController?.object(at: indexPath) as? EventType {
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
@@ -71,12 +78,12 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataLayer?.numberOfEvents() ?? 0
+        return resultsController?.objectCount ?? 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        if let event = dataLayer?.object(at: indexPath) {
+        if let event = resultsController?.object(at: indexPath) as? EventType {
             configureCell(cell, withEvent: event)
         }
         return cell
@@ -89,15 +96,19 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            if let event = dataLayer?.object(at: indexPath) {
-                dataLayer?.deleteEvent(event)
-                dataLayer?.save()
+            if let event = resultsController?.object(at: indexPath) {
+                do {
+                    try dataLayer?.writableContext.delete(event)
+                    try dataLayer?.writableContext.saveContext()
+                } catch {
+                    print("Error deleting event \(event): \(error)")
+                }
             }
         }
     }
 
     func configureCell(_ cell: UITableViewCell, withEvent event: EventType) {
-        cell.textLabel!.text = event.timestamp!.description
+        cell.textLabel!.text = event.timestamp?.description ?? "-"
     }
 }
 

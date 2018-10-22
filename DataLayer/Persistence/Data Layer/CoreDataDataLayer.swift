@@ -42,24 +42,19 @@ class CoreDataDataLayer: NSObject, DataLayer {
     /// Context saves immediatelly propagate changes to the persistent store.
     lazy var writableContext: WritableStorageContext = {
         let context = persistentContainer.newBackgroundContext()
-        
+
         // Merge operations should occur on a property basis (`id` attribute)
         // and the in memory version “wins” over the persisted one.
         // All entities have been modeled with an `id` constraint.
         context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-        
+
         return context
     }()
     
     
     // MARK: - Results Controller
     
-    func makeResultsController<T: Storable>(_ model: T.Type, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController? {
-        guard let managedObjectType = model as? NSManagedObject.Type else {
-            print("`model` is not of type `NSManagedObject` type.")
-            return nil
-        }
-        let rc = CoreDataResultsController(managedObjectType, context: mainContext, predicate: predicate, sorted: sorted)
-        return rc
+    func makeResultsController(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController? {
+        return CoreDataResultsController(entityName, context: mainContext, predicate: predicate, sorted: sorted)
     }
 }

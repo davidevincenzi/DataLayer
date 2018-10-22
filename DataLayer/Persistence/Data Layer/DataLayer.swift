@@ -12,13 +12,7 @@ protocol DataLayer {
     // MARK: - Results Controller
     
     /// Create a ResultsController
-    func makeResultsController<T: Storable>(_ model: T.Type, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController?
-    
-    
-    // MARK: - Setup
-    
-    /// Load the underlying persistent store.
-    func load(completion: ((Error?) -> Void)?)
+    func makeResultsController(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController?
     
     
     // MARK: - Contexts
@@ -32,15 +26,4 @@ protocol DataLayer {
 
 protocol HasDataLayer {
     var dataLayer: DataLayer { get }
-}
-
-
-extension DataLayer {
-    func load(completion: ((Error?) -> Void)? = nil) {
-        load(completion: completion)
-    }
-    
-    func makeResultsController<T: Storable>(_ model: T.Type, predicate: NSPredicate? = nil, sorted: Sorted? = nil) -> ResultsController? {
-        return makeResultsController(model, predicate: predicate, sorted: sorted)
-    }
 }

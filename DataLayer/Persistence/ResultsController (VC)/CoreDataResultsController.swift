@@ -10,6 +10,10 @@ import CoreData
 
 class CoreDataResultsController<T: NSManagedObject>: NSObject, ResultsController, NSFetchedResultsControllerDelegate {
     
+    var entityName: String
+    var context: ReadableStorageContext
+    var predicate: NSPredicate?
+    var sorted: Sorted?
     
     // MARK: - ResultsController protocol conformance
     
@@ -26,26 +30,23 @@ class CoreDataResultsController<T: NSManagedObject>: NSObject, ResultsController
     
     // MARK: - Setup
     
-    init(_ model: T.Type, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) {
-        super.init()
+//    init(_ model: T.Type, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) {
+    init(_ entityName: String, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) {
+        self.entityName = entityName
+        self.context = context
+        self.predicate = predicate
+        self.sorted = sorted
         
-        // fetched results controller
-        createFetchedResultsController(model, context: context, predicate: predicate, sorted: sorted)
+        super.init()
     }
     
     
     // MARK: - Fetched results controller
     
-    private var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
-    
-    private func createFetchedResultsController<T>(_ model: T.Type, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) where T: NSManagedObject {
+    private lazy var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>? = {
         guard let nativeContext = context as? NSManagedObjectContext else {
             print("Unresolved error: `context` is not an `NSManagedObjectContext`!")
-            return
-        }
-        guard let entityName = model.entity().name else {
-            print("`model` is not of `NSManagedObject` type.")
-            return
+            return nil
         }
         
         // build fetch request
@@ -61,14 +62,20 @@ class CoreDataResultsController<T: NSManagedObject>: NSObject, ResultsController
         fetchRequest.fetchBatchSize = 20
         
         // create controller
-        if let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: nativeContext, sectionNameKeyPath: nil, cacheName: "Master") as? NSFetchedResultsController<NSFetchRequestResult> {
-            fetchedResultsController = controller
-            fetchedResultsController?.delegate = self
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: nativeContext, sectionNameKeyPath: nil, cacheName: "Master") as? NSFetchedResultsController<NSFetchRequestResult>
+        controller?.delegate = self
+        
+        do {
+            try controller?.performFetch()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
         }
-        else {
-            print("Failed to create NSFetchedResultsController")
-        }
-    }
+        
+        return controller
+    }()
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         dataChanged?()
