@@ -11,6 +11,7 @@ class MasterViewController: UITableViewController {
     
     var detailViewController: DetailViewController? = nil
     var dataLayer: DataLayer?
+    var resultsController: ResultsController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,12 +25,18 @@ class MasterViewController: UITableViewController {
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
         
-        dataLayer?.dataChanged = { [weak self] in
+        resultsController = dataLayer?.makeResultsController(Event.self, sorted: Sorted(key: "cd_timestamp", ascending: false))
+        resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }
     }
     
     @objc private func insertNewObject() {
+//        var user = dataLayer?.writableContext.create(User.Type, completion: { storable in
+//            guard let user = storable as? UserType else { return }
+//            user?.name = String.random()
+//        })
+        
         var user = dataLayer?.createUser()
         user?.name = String.random()
         var event = dataLayer?.createEvent()
