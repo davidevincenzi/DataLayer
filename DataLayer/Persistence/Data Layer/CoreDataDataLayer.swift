@@ -40,7 +40,7 @@ class CoreDataDataLayer: NSObject, DataLayer {
     
     /// Background context to perform long/write operations.
     /// Context saves immediatelly propagate changes to the persistent store.
-    lazy var writableContext: WritableStorageContext = {
+    lazy var writableContext: StorageContext = {
         let context = persistentContainer.newBackgroundContext()
 
         // Merge operations should occur on a property basis (`id` attribute)

@@ -10,13 +10,15 @@ import CoreData
 
 extension NSManagedObjectContext: ReadableStorageContext {
    
-    func loadObject<T>(withId id: AnyObject) -> T? where T : Storable {
+    func loadObject(withId id: AnyObject, completion: @escaping ((Storable?) -> ())) {
         guard let objectID = id as? NSManagedObjectID else {
             print("`id` is not an `NSManagedObjectID`.")
-            return nil
+            completion(nil)
+            return
         }
-        
-        return object(with: objectID) as? T
+        perform { [weak self] in
+            completion(self?.object(with: objectID))
+        }
     }
     
     func fetch<T>(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ())) where T : Storable {
@@ -75,6 +77,9 @@ extension NSManagedObjectContext: WritableStorageContext {
     func delete(_ object: Storable) throws {
         guard let managedObject = object as? NSManagedObject else {
             throw DataLayerError.persistence("`object` is not an `NSManagedObject`.")
+        }
+        guard managedObject.managedObjectContext == self else {
+            throw DataLayerError.persistence("Trying to delete an object from the wrong context.")
         }
         delete(managedObject)
     }

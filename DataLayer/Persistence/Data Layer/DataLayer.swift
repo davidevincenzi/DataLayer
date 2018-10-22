@@ -21,7 +21,7 @@ protocol DataLayer {
     var mainContext: ReadableStorageContext { get }
     
     /// Write context (read-write).
-    var writableContext: WritableStorageContext { get }
+    var writableContext: StorageContext { get }
 }
 
 protocol HasDataLayer {

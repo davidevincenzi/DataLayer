@@ -19,7 +19,7 @@ typealias StorageContext = ReadableStorageContext & WritableStorageContext
 /// Read operations, on context.
 protocol ReadableStorageContext {
     /// Load an object with the specified ID.
-    func loadObject<T: Storable>(withId id: AnyObject) -> T?
+    func loadObject(withId id: AnyObject, completion: @escaping ((Storable?) -> ()))
     
     /// Return a list of objects that are conformed to the `Storable` protocol
     func fetch<T: Storable>(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ()))
