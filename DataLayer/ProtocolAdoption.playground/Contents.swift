@@ -1,31 +1,22 @@
 import CoreData
 
-class Object: NSManagedObject {
-    @NSManaged var users: Set<User>
+class Object: NSObject {
+    var cd_users: Set<User> = [User()]
 }
 
-class User: NSManagedObject {
-    @NSManaged var name: String
-}
-
-protocol List {
-    var value: NSArray { get }
+class User: NSObject {
+    var name: String = "name"
 }
 
 protocol ObjectProtocol {
-    var users: List { get }
-}
-
-extension Set: List {
-    var value: NSArray {
-        return NSArray()
-    }
+    var users: [User] { get }
 }
 
 extension Object: ObjectProtocol {
-    
+    var users: [User] {
+        return Array(cd_users)
+    }
 }
 
 let object: ObjectProtocol = Object()
-let first = object.users.value
-
+let first = object.users.first
