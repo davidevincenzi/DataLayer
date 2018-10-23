@@ -31,7 +31,9 @@ class DetailViewController: UIViewController {
 
     @IBAction func updateTimestampAndRefresh(_ sender: Any) {
         let newDate = Date()
-        dataLayer?.updateEvent(timestamp: newDate)
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            self?.dataLayer?.updateEvent(timestamp: newDate)
+        }
     }
     
     @IBAction func refreshButtonAction(_ sender: Any) {
