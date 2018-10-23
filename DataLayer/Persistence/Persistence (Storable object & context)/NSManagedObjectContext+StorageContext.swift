@@ -17,7 +17,7 @@ extension NSManagedObjectContext: ReadableStorageContext {
             return
         }
         perform { [weak self] in
-            completion(self?.object(with: objectID) as? Storable)
+            completion(self?.object(with: objectID))
         }
     }
     
@@ -50,16 +50,14 @@ extension NSManagedObjectContext: ReadableStorageContext {
 
 extension NSManagedObjectContext: WritableStorageContext {
     
-    func create(_ entity: Storable.Type, completion: @escaping ((Storable) -> Void)) throws {
-        guard let entityDescription = NSEntityDescription.entity(forEntityName: entity.entityName, in: self) else {
-            throw DataLayerError.persistence("Unable to get entity description for \(entity.entityName)")
+    func create(_ entityName: String, completion: @escaping ((Storable) -> Void)) throws {
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: entityName, in: self) else {
+            throw DataLayerError.persistence("Unable to get entity description for \(entityName)")
         }
         
         perform {
             //let newObject = MO.init(context: self) as! T
-            guard let newObject = NSManagedObject(entity: entityDescription, insertInto: self) as? Storable else {
-                fatalError("The entity must conform to the Storable type")
-            }
+            let newObject = NSManagedObject(entity: entityDescription, insertInto: self) as Storable
             completion(newObject)
         }
     }

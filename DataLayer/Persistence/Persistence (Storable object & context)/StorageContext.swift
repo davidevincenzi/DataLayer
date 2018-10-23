@@ -28,7 +28,7 @@ protocol ReadableStorageContext {
 /// Write operations, on context.
 protocol WritableStorageContext {
     /// Create a new object with default values that conforms to `Storable` protocol.
-    func create(_ entity: Storable.Type, completion: @escaping ((Storable) -> Void)) throws
+    func create(_ entityName: String, completion: @escaping ((Storable) -> Void)) throws
     
     /// Save
     func saveContext() throws

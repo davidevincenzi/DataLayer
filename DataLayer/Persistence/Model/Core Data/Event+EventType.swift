@@ -8,10 +8,6 @@
 import Foundation
 
 extension Event: EventType {
-    static var entityName: String {
-        return "Event"
-    }
-    
     
     var user: UserType? {
         get {

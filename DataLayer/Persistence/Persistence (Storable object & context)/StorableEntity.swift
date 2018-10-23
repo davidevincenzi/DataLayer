@@ -7,10 +7,10 @@
 
 import Foundation
 
-//enum StorableEntity: String {
-//    case user = "User"
-//    case event = "Event"
-//}
+enum StorableEntity: String {
+    case user = "User"
+    case event = "Event"
+}
 
 /// Ideally, `EventType` could conform to `Storable` and implement `entityName`.
 ///

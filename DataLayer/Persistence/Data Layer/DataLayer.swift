@@ -12,7 +12,7 @@ protocol DataLayer {
     // MARK: - Results Controller
     
     /// Create a ResultsController
-    func makeResultsController(_ entityType: Storable.Type, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController?
+    func makeResultsController(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController?
     
     
     // MARK: - Contexts

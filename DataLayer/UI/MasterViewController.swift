@@ -27,7 +27,7 @@ class MasterViewController: UITableViewController {
         
         // setup a results controller
         // FIXME: `cd_timestamp` is Core Data specific
-        resultsController = dataLayer?.makeResultsController(Event.self, predicate: nil, sorted: Sorted(key: "cd_timestamp", ascending: false))
+        resultsController = dataLayer?.makeResultsController(StorableEntity.event.rawValue, predicate: nil, sorted: Sorted(key: "cd_timestamp", ascending: false))
         resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }
@@ -35,11 +35,11 @@ class MasterViewController: UITableViewController {
     
     @objc private func insertNewObject() {
         do {
-            try dataLayer?.writableContext.create(User.self, completion: { [weak self] storable in
+            try dataLayer?.writableContext.create(StorableEntity.user.rawValue, completion: { [weak self] storable in
                 var user = storable as? UserType
                 user?.name = String.random()
                 
-                try? self?.dataLayer?.writableContext.create(Event.self, completion: { (storable) in
+                try? self?.dataLayer?.writableContext.create(StorableEntity.event.rawValue, completion: { (storable) in
                     var event = storable as? EventType
                     event?.timestamp = Date()
                     event?.user = user
