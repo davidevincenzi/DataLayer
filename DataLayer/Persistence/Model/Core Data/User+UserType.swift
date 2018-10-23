@@ -10,10 +10,16 @@ import Foundation
 extension User: UserType {
     var name: String? {
         get {
-            return cd_name
+            var _name: String?
+            managedObjectContext?.performAndWait { [ weak self] in
+                _name = self?.cd_name
+            }
+            return _name
         }
         set {
-            self.cd_name = newValue
+            managedObjectContext?.performAndWait { [ weak self] in
+                self?.cd_name = newValue
+            }
         }
     }
     

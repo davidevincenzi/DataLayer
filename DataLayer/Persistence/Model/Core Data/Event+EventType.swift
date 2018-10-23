@@ -11,11 +11,17 @@ extension Event: EventType {
     
     var user: UserType? {
         get {
-            return cd_user
+            var _user: UserType?
+            managedObjectContext?.performAndWait { [ weak self] in
+                _user = self?.cd_user
+            }
+            return _user
         }
         set {
-            if let user = newValue as? User {
-                self.cd_user = user
+            managedObjectContext?.performAndWait { [ weak self] in
+                if let user = newValue as? User {
+                    self?.cd_user = user
+                }
             }
         }
     }

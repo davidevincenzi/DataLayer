@@ -33,8 +33,10 @@ class DetailViewController: UIViewController {
 
     var detailItem: EventType? {
         didSet {
-            // Update the view.
-            configureView()
+            DispatchQueue.main.async { [weak self] in
+                // Update the view.
+                self?.configureView()
+            }
         }
     }
 
@@ -48,5 +50,11 @@ class DetailViewController: UIViewController {
         }
     }
     
+    @IBAction func updateTimestampAndRefresh(_ sender: Any) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            self?.detailItem?.timestamp = Date()
+        }
+        configureView()
+    }
 }
 
