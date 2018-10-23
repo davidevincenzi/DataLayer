@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol EventType {
+protocol EventType: Storable {
     var timestamp: Date? { get set }
     var user: UserType? { get set }
 }

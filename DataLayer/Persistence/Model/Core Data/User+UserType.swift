@@ -8,6 +8,10 @@
 import Foundation
 
 extension User: UserType {
+    static var entityName: String {
+        return "User"
+    }
+    
     var name: String? {
         get {
             return cd_name

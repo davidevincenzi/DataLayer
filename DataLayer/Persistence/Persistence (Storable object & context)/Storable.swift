@@ -15,10 +15,7 @@ protocol Storable {
 }
 
 /// Core Data `NSManagedObject` compliance to `Storable` protocol.
-extension NSManagedObject: Storable {
-    static var entityName: String {
-        return self.entity().name!
-    }
+extension NSManagedObject {
     
     var storableId: AnyObject {
         return objectID
