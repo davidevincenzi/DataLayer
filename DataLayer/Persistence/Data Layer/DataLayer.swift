@@ -17,13 +17,12 @@ protocol DataLayer {
     
     // MARK: - Contexts
     
-    /// Main view context (read-only).
-    var mainContext: ReadableStorageContext { get }
+    /// Main view context.
+    var mainContext: StorageContext { get }
     
-    /// Write context (read-write).
-    var writableContext: StorageContext { get }
-}
-
-protocol HasDataLayer {
-    var dataLayer: DataLayer { get }
+    /// Shared backround context (always the same instance).
+    var sharedBackgroundContext: StorageContext { get }
+    
+    /// Unique backround context (always a new instance).
+    var uniqueBackgroundContext: StorageContext { get }
 }

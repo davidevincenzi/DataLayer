@@ -13,6 +13,10 @@ class MasterViewController: UITableViewController {
     var dataLayer: DataLayer?
     var resultsController: ResultsController?
     
+    lazy var writeStorageContext: StorageContext? = {
+        return dataLayer?.uniqueBackgroundContext
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -35,16 +39,16 @@ class MasterViewController: UITableViewController {
     
     @objc private func insertNewObject() {
         do {
-            try dataLayer?.writableContext.create(StorableEntity.user.rawValue, completion: { [weak self] storable in
+            try writeStorageContext?.create(StorableEntity.user.rawValue, completion: { [weak self] storable in
                 var user = storable as? UserType
                 user?.name = String.random()
                 
-                try? self?.dataLayer?.writableContext.create(StorableEntity.event.rawValue, completion: { (storable) in
+                try? self?.writeStorageContext?.create(StorableEntity.event.rawValue, completion: { (storable) in
                     var event = storable as? EventType
                     event?.timestamp = Date()
                     event?.user = user
                     
-                    try? self?.dataLayer?.writableContext.saveContext()
+                    try? self?.writeStorageContext?.saveContext()
                 })
             })
         } catch {
@@ -100,12 +104,12 @@ class MasterViewController: UITableViewController {
                 let eventId = event.storableId
                 
                 // get managed object identifier from readable context
-                dataLayer?.writableContext.loadObject(withId: eventId) { [weak self] storable in
+                writeStorageContext?.loadObject(withId: eventId) { [weak self] storable in
                     do {
                         // then delete it on writable context
                         if let wEvent = storable {
-                            try self?.dataLayer?.writableContext.delete(wEvent)
-                            try self?.dataLayer?.writableContext.saveContext()
+                            try self?.writeStorageContext?.delete(wEvent)
+                            try self?.writeStorageContext?.saveContext()
                         }
                     } catch {
                         print("Error deleting event \(event): \(error)")

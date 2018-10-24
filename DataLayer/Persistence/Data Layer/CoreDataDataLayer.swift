@@ -27,9 +27,9 @@ class CoreDataDataLayer: NSObject, DataLayer {
     
     // MARK: - Contexts
     
-    /// The main, read-only context, has the persistent store as parent.
+    /// The main context, has the persistent store as parent.
     /// Automatically merge changes from store.
-    lazy var mainContext: ReadableStorageContext = {
+    lazy var mainContext: StorageContext = {
         persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
         
         // Merge policy is set to prefer store version over in-memory version (since context is read-only).
@@ -38,9 +38,9 @@ class CoreDataDataLayer: NSObject, DataLayer {
         return persistentContainer.viewContext
     }()
     
-    /// Background context to perform long/write operations.
+    /// Shared background context (always the same instance) to perform long/write operations.
     /// Context saves immediatelly propagate changes to the persistent store.
-    lazy var writableContext: StorageContext = {
+    lazy var sharedBackgroundContext: StorageContext = {
         let context = persistentContainer.newBackgroundContext()
 
         // Merge operations should occur on a property basis (`id` attribute)
@@ -50,6 +50,19 @@ class CoreDataDataLayer: NSObject, DataLayer {
 
         return context
     }()
+    
+    /// Unique background context (always a new instance) to perform long/write operations.
+    /// Context saves immediatelly propagate changes to the persistent store.
+    var uniqueBackgroundContext: StorageContext {
+        let context = persistentContainer.newBackgroundContext()
+        
+        // Merge operations should occur on a property basis (`id` attribute)
+        // and the in memory version “wins” over the persisted one.
+        // All entities have been modeled with an `id` constraint.
+        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+        
+        return context
+    }
     
     
     // MARK: - Results Controller
