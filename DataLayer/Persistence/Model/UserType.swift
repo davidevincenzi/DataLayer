@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol UserType {
+protocol UserType: Storable {
     var name: String? { get set }
 }

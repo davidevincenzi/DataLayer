@@ -8,7 +8,6 @@
 import Foundation
 
 protocol ResultsController {
-    
     /// Called when data has changed.
     var dataChanged: (() -> Void)? { get set }
     

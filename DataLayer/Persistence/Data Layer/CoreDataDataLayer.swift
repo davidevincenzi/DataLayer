@@ -54,7 +54,7 @@ class CoreDataDataLayer: NSObject, DataLayer {
     
     // MARK: - Results Controller
     
-    func makeResultsController(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController? {
-        return CoreDataResultsController(entityName, context: mainContext, predicate: predicate, sorted: sorted)
+    func makeResultsController<T>(_ entity: T.Type, predicate: NSPredicate?, sorted: Sorted?) -> ResultsController? {
+        return CoreDataResultsController(entityType: T.self, context: mainContext, predicate: predicate, sorted: sorted)
     }
 }

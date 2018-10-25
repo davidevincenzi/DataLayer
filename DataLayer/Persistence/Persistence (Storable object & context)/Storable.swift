@@ -8,26 +8,7 @@
 import Foundation
 import CoreData
 
-/// Protocol for storable objects (e.g., Core Data NSManagedObject, Realm Object)
+/// Umbrella protocol for all storable protocols
 protocol Storable {
-    static var entityName: String { get }
-    var storableId: AnyObject { get }
-}
-
-/// Core Data `NSManagedObject` compliance to `Storable` protocol.
-extension NSManagedObject: Storable {
-    static var entityName: String {
-        return self.entity().name!
-    }
     
-    var storableId: AnyObject {
-        return objectID
-    }
 }
-
-/// Realm `Object` compliance to `Storable` protocol.
-//extension Object: Storable {
-//    var entityName: String {
-//        return ______
-//    }
-//}

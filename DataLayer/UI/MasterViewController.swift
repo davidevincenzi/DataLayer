@@ -15,6 +15,12 @@ class MasterViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let objects = dataLayer!.mainContext.fetch(EventType.self, predicate: nil, sorted: nil)
+        for object in objects {
+            print(object)
+        }
+        
         // Do any additional setup after loading the view, typically from a nib.
         navigationItem.leftBarButtonItem = editButtonItem
 
@@ -27,7 +33,7 @@ class MasterViewController: UITableViewController {
         
         // setup a results controller
         // FIXME: `cd_timestamp` is Core Data specific
-        resultsController = dataLayer?.makeResultsController(StorableEntity.event.rawValue, predicate: nil, sorted: Sorted(key: "cd_timestamp", ascending: false))
+        resultsController = dataLayer?.makeResultsController(EventType.self, predicate: nil, sorted: Sorted(key: "cd_timestamp", ascending: false))
         resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }
@@ -35,14 +41,14 @@ class MasterViewController: UITableViewController {
     
     @objc private func insertNewObject() {
         do {
-            try dataLayer?.writableContext.create(StorableEntity.user.rawValue, completion: { [weak self] storable in
-                var user = storable as? UserType
-                user?.name = String.random()
+            try dataLayer?.writableContext.create(UserType.self, completion: { [weak self] storable in
+                var user = storable
+                user.name = String.random()
                 
-                try? self?.dataLayer?.writableContext.create(StorableEntity.event.rawValue, completion: { (storable) in
-                    var event = storable as? EventType
-                    event?.timestamp = Date()
-                    event?.user = user
+                try? self?.dataLayer?.writableContext.create(EventType.self, completion: { (storable) in
+                    var event = storable
+                    event.timestamp = Date()
+                    event.user = user
                     
                     try? self?.dataLayer?.writableContext.saveContext()
                 })
@@ -95,25 +101,25 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            if let event = resultsController?.object(at: indexPath) {
-                let eventId = event.storableId
-                
-                // get managed object identifier from readable context
-                dataLayer?.writableContext.loadObject(withId: eventId) { [weak self] storable in
-                    do {
-                        // then delete it on writable context
-                        if let wEvent = storable {
-                            try self?.dataLayer?.writableContext.delete(wEvent)
-                            try self?.dataLayer?.writableContext.saveContext()
-                        }
-                    } catch {
-                        print("Error deleting event \(event): \(error)")
-                    }
-                }
-                
-            }
-        }
+//        if editingStyle == .delete {
+//            if let event = resultsController?.object(at: indexPath) {
+//                let eventId = event.storableId
+//
+//                // get managed object identifier from readable context
+//                dataLayer?.writableContext.loadObject(withId: eventId) { [weak self] storable in
+//                    do {
+//                        // then delete it on writable context
+//                        if let wEvent = storable {
+//                            try self?.dataLayer?.writableContext.delete(wEvent)
+//                            try self?.dataLayer?.writableContext.saveContext()
+//                        }
+//                    } catch {
+//                        print("Error deleting event \(event): \(error)")
+//                    }
+//                }
+//
+//            }
+//        }
     }
 
     func configureCell(_ cell: UITableViewCell, withEvent event: EventType) {

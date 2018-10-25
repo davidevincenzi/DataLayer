@@ -18,17 +18,23 @@ typealias StorageContext = ReadableStorageContext & WritableStorageContext
 
 /// Read operations, on context.
 protocol ReadableStorageContext {
-    /// Load an object with the specified ID.
+    /// Asynchronously load an object with the specified ID.
     func loadObject(withId id: AnyObject, completion: @escaping ((Storable?) -> ()))
     
-    /// Return a list of objects that are conformed to the `Storable` protocol
-    func fetch<T: Storable>(_ entityName: String, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ()))
+    /// Synchronously load an object with the specified ID.
+    func loadObject(withId id: AnyObject) -> Storable?
+    
+    /// Asynchronously return a list of objects that are conformed to the `Storable` protocol
+    func fetch<T>(_ entity: T.Type, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ()))
+    
+    /// Synchronously return a list of objects that are conformed to the `Storable` protocol
+    func fetch<T>(_ entity: T.Type, predicate: NSPredicate?, sorted: Sorted?) -> [T]
 }
 
 /// Write operations, on context.
 protocol WritableStorageContext {
     /// Create a new object with default values that conforms to `Storable` protocol.
-    func create(_ entityName: String, completion: @escaping ((Storable) -> Void)) throws
+    func create<T>(_ entity: T.Type, completion: @escaping ((T) -> Void)) throws
     
     /// Save
     func saveContext() throws

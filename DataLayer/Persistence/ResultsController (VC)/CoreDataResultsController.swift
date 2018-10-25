@@ -8,9 +8,9 @@
 import Foundation
 import CoreData
 
-class CoreDataResultsController<T: NSManagedObject>: NSObject, ResultsController, NSFetchedResultsControllerDelegate {
+class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResultsControllerDelegate {
     
-    var entityName: String
+    var entityType: T.Type
     var context: ReadableStorageContext
     var predicate: NSPredicate?
     var sorted: Sorted?
@@ -30,9 +30,8 @@ class CoreDataResultsController<T: NSManagedObject>: NSObject, ResultsController
     
     // MARK: - Setup
     
-//    init(_ model: T.Type, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) {
-    init(_ entityName: String, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) {
-        self.entityName = entityName
+    init(entityType: T.Type, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) {
+        self.entityType = entityType
         self.context = context
         self.predicate = predicate
         self.sorted = sorted
@@ -49,8 +48,10 @@ class CoreDataResultsController<T: NSManagedObject>: NSObject, ResultsController
             return nil
         }
         
+        guard let entityName = NSManagedObjectContext.entityName(for: entityType) else { return nil }
+        
         // build fetch request
-        let fetchRequest: NSFetchRequest<T> = NSFetchRequest(entityName: entityName)
+        let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: entityName)
         
         // sorting
         if let sort = sorted {
