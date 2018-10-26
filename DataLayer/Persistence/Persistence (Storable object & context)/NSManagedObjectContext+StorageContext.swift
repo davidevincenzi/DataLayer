@@ -67,7 +67,6 @@ extension NSManagedObjectContext: ReadableStorageContext {
 }
 
 extension NSManagedObjectContext: WritableStorageContext {
-    
     func create<T>(_ entity: T.Type, completion: @escaping ((T) -> Void)) throws {
         guard
             let entityName = NSManagedObjectContext.entityName(for: entity),
@@ -106,8 +105,12 @@ extension NSManagedObjectContext: WritableStorageContext {
         }
     }
     
-    func deleteAll(_ entityName: String) throws {
-        perform { [weak self] in
+    func deleteAll<T>(_ entity: T.Type) throws {
+        guard let entityName = NSManagedObjectContext.entityName(for: entity) else {
+            throw DataLayerError.persistence("`object` is not an `NSManagedObject`.")
+        }
+        
+        performAndWait { [weak self] in
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
             

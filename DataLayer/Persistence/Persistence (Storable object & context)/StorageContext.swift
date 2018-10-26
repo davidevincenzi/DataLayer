@@ -46,7 +46,7 @@ protocol WritableStorageContext {
     func delete(_ object: Storable) throws
     
     /// Delete all objects that are conformed to the `Storable` protocol
-    func deleteAll(_ entityName: String) throws
+    func deleteAll<T>(_ entity: T.Type) throws
 }
 
 /// Query options.
