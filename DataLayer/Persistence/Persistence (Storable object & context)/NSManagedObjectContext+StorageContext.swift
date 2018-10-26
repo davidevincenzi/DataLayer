@@ -82,8 +82,10 @@ extension NSManagedObjectContext: WritableStorageContext {
     }
     
     func saveContext() throws {
-        if hasChanges {
-            try save()
+        performAndWait {
+            if hasChanges {
+                try? save()
+            }
         }
     }
     
@@ -97,10 +99,11 @@ extension NSManagedObjectContext: WritableStorageContext {
         guard let managedObject = object as? NSManagedObject else {
             throw DataLayerError.persistence("`object` is not an `NSManagedObject`.")
         }
-        guard managedObject.managedObjectContext == self else {
-            throw DataLayerError.persistence("Trying to delete an object from the wrong context.")
+        let objectId = managedObject.objectID
+        performAndWait {
+            let obj = self.object(with: objectId)
+            delete(obj)
         }
-        delete(managedObject)
     }
     
     func deleteAll(_ entityName: String) throws {

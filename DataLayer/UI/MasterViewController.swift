@@ -101,25 +101,13 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            if let event = resultsController?.object(at: indexPath) {
-//                let eventId = event.storableId
-//
-//                // get managed object identifier from readable context
-//                dataLayer?.writableContext.loadObject(withId: eventId) { [weak self] storable in
-//                    do {
-//                        // then delete it on writable context
-//                        if let wEvent = storable {
-//                            try self?.dataLayer?.writableContext.delete(wEvent)
-//                            try self?.dataLayer?.writableContext.saveContext()
-//                        }
-//                    } catch {
-//                        print("Error deleting event \(event): \(error)")
-//                    }
-//                }
-//
-//            }
-//        }
+        if editingStyle == .delete {
+            if let event = resultsController?.object(at: indexPath) {
+                // get managed object identifier from readable context
+                try? dataLayer?.writableContext.delete(event)
+                try? dataLayer?.writableContext.saveContext()
+            }
+        }
     }
 
     func configureCell(_ cell: UITableViewCell, withEvent event: EventType) {
