@@ -129,15 +129,4 @@ extension NSManagedObjectContext {
             return nil
         }
     }
-    
-    static func entityType<T>(for storableEntity: T.Type) -> NSManagedObject.Type? {
-        switch storableEntity {
-        case is EventType.Protocol:
-            return Event.self
-        case is UserType.Protocol:
-            return User.self
-        default:
-            return nil
-        }
-    }
 }
