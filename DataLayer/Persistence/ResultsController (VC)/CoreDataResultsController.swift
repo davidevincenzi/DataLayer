@@ -10,10 +10,10 @@ import CoreData
 
 class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResultsControllerDelegate {
     
-    var entityType: T.Type
+    var storing: Storing<T>
+    var filtering: Filtering<T>?
+    var sorting: Sorting<T>?
     var context: ReadableStorageContext
-    var predicate: NSPredicate?
-    var sorted: Sorted?
     
     // MARK: - ResultsController protocol conformance
     
@@ -29,12 +29,12 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
     
     
     // MARK: - Setup
-    
-    init(entityType: T.Type, context: ReadableStorageContext, predicate: NSPredicate?, sorted: Sorted?) {
-        self.entityType = entityType
+
+    init(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, context: ReadableStorageContext) {
+        self.storing = storing
+        self.filtering = filtering
+        self.sorting = sorting
         self.context = context
-        self.predicate = predicate
-        self.sorted = sorted
         
         super.init()
     }
@@ -48,13 +48,16 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
             return nil
         }
         
-        guard let entityName = NSManagedObjectContext.entityName(for: entityType) else { return nil }
+        let entityName = storing.entityName
         
         // build fetch request
         let fetchRequest: NSFetchRequest<NSManagedObject> = NSFetchRequest(entityName: entityName)
         
+        // filtering
+        fetchRequest.predicate = filtering?.filter()
+        
         // sorting
-        if let sort = sorted {
+        if let sort = sorting?.sortDescriptor() {
             let sortDescriptor = NSSortDescriptor(key: sort.key, ascending: sort.ascending)
             fetchRequest.sortDescriptors = [sortDescriptor]
         }

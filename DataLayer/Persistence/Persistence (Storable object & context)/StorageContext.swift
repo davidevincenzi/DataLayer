@@ -11,7 +11,7 @@ import Foundation
 /**
  * Provides an high-level API for doing persistence operations in context.
  */
- 
+
 
 /// Full-featured storage context.
 typealias StorageContext = ReadableStorageContext & WritableStorageContext
@@ -25,17 +25,17 @@ protocol ReadableStorageContext {
     func loadObject(withId id: AnyObject) -> Storable?
     
     /// Asynchronously return a list of objects that are conformed to the `Storable` protocol
-    func fetch<T>(_ entity: T.Type, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ()))
+    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, completion: @escaping (([T]) -> ()))
     
     /// Synchronously return a list of objects that are conformed to the `Storable` protocol
-    func fetch<T>(_ entity: T.Type, predicate: NSPredicate?, sorted: Sorted?) -> [T]
+    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?) -> [T]
 }
 
 /// Write operations, on context.
 protocol WritableStorageContext {
     /// Create a new object with default values that conforms to `Storable` protocol.
-    func create<T>(_ entity: T.Type, completion: @escaping ((T) -> Void)) throws
-    
+    func create<T>(_ storing: Storing<T>, completion: @escaping ((T) -> Void)) throws
+
     /// Save
     func saveContext() throws
     
@@ -46,11 +46,27 @@ protocol WritableStorageContext {
     func delete(_ object: Storable) throws
     
     /// Delete all objects that are conformed to the `Storable` protocol
-    func deleteAll<T>(_ entity: T.Type) throws
+    func deleteAll<T>(_ storing: Storing<T>) throws
 }
 
 /// Query options.
-public struct Sorted {
+
+struct Storing<T> {
+    var type: T.Type {
+        return T.self
+    }
+    var entityName: String
+}
+
+struct Filtering<T> {
+    let filter: () -> NSPredicate
+}
+
+struct Sorting<T> {
+    let sortDescriptor: () -> SortingDescriptor
+}
+
+struct SortingDescriptor {
     var key: String
     var ascending: Bool = true
 }

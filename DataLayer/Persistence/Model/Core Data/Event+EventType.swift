@@ -41,3 +41,31 @@ extension Event: EventType {
         }
     }
 }
+
+extension Storing where T == EventType {
+    
+    static var eventType: Storing<EventType> {
+        return Storing<EventType>(entityName: "Event")
+    }
+    
+}
+
+extension Filtering where T == EventType {
+    
+    static func timestamp(largerThan date: Date) -> Filtering<EventType> {
+        return Filtering<EventType> {
+            return NSPredicate(format: "cd_timestamp > %@", date as NSDate)
+        }
+    }
+    
+}
+
+extension Sorting where T == EventType {
+    
+    static func timestamp(ascending: Bool) -> Sorting<EventType> {
+        return Sorting<EventType> {
+            return SortingDescriptor(key: "cd_timestamp", ascending: ascending)
+        }
+    }
+    
+}

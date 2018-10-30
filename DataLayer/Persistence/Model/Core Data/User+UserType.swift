@@ -25,3 +25,11 @@ extension User: UserType {
     
     
 }
+
+extension Storing where T == UserType {
+    
+    static var userType: Storing<UserType> {
+        return Storing<UserType>(entityName: "User")
+    }
+    
+}

@@ -29,25 +29,28 @@ extension NSManagedObjectContext: ReadableStorageContext {
         return object(with: objectID) as? Storable
     }
     
-    func fetch<T>(_ entity: T.Type, predicate: NSPredicate?, sorted: Sorted?, completion: @escaping (([T]) -> ())) {
+    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, completion: @escaping (([T]) -> ())) {
         perform { [weak self] in
             guard let bSelf = self else {
                 completion([])
                 return
             }
-            let objects = bSelf.fetch(entity, predicate: predicate, sorted: sorted)
+            let objects = bSelf.fetch(storing, filtering: filtering, sorting: sorting)
             completion(objects)
         }
     }
     
-    func fetch<T>(_ entity: T.Type, predicate: NSPredicate?, sorted: Sorted?) -> [T] {
-        guard let entityName = NSManagedObjectContext.entityName(for: entity) else { return [T]() }
+    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?) -> [T] {
+        let entityName = storing.entityName
         
         // build fetch request
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
         
+        // filtering
+        fetchRequest.predicate = filtering?.filter()
+        
         // sorting
-        if let sort = sorted {
+        if let sort = sorting?.sortDescriptor() {
             let sortDescriptor = NSSortDescriptor(key: sort.key, ascending: sort.ascending)
             fetchRequest.sortDescriptors = [sortDescriptor]
         }
@@ -67,11 +70,12 @@ extension NSManagedObjectContext: ReadableStorageContext {
 }
 
 extension NSManagedObjectContext: WritableStorageContext {
-    func create<T>(_ entity: T.Type, completion: @escaping ((T) -> Void)) throws {
-        guard
-            let entityName = NSManagedObjectContext.entityName(for: entity),
-            let entityDescription = NSEntityDescription.entity(forEntityName: entityName, in: self) else {
-            throw DataLayerError.persistence("Unable to get entity description for \(entity)")
+    func create<T>(_ storing: Storing<T>, completion: @escaping ((T) -> Void)) throws {
+        
+        let entityName = storing.entityName
+        
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: entityName, in: self) else {
+            throw DataLayerError.persistence("Unable to get entity description for \(entityName)")
         }
         
         perform {
@@ -105,10 +109,8 @@ extension NSManagedObjectContext: WritableStorageContext {
         }
     }
     
-    func deleteAll<T>(_ entity: T.Type) throws {
-        guard let entityName = NSManagedObjectContext.entityName(for: entity) else {
-            throw DataLayerError.persistence("`object` is not an `NSManagedObject`.")
-        }
+    func deleteAll<T>(_ storing: Storing<T>) throws {
+        let entityName = storing.entityName
         
         performAndWait { [weak self] in
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
@@ -122,17 +124,4 @@ extension NSManagedObjectContext: WritableStorageContext {
         }
     }
     
-}
-
-extension NSManagedObjectContext {
-    static func entityName<T>(for storableEntity: T.Type) -> String? {
-        switch storableEntity {
-        case is EventType.Protocol:
-            return "Event"
-        case is UserType.Protocol:
-            return "User"
-        default:
-            return nil
-        }
-    }
 }

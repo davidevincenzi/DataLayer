@@ -15,8 +15,11 @@ class MasterViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let objects = dataLayer!.mainContext.fetch(EventType.self, predicate: nil, sorted: nil)
+                
+        let testDate = Date(timeIntervalSinceReferenceDate: 562588437)
+        let objects = dataLayer!.mainContext.fetch(.eventType,
+                                                   filtering: .timestamp(largerThan: testDate),
+                                                   sorting: .timestamp(ascending: false))
         for object in objects {
             print(object)
         }
@@ -32,8 +35,7 @@ class MasterViewController: UITableViewController {
         }
         
         // setup a results controller
-        // FIXME: `cd_timestamp` is Core Data specific
-        resultsController = dataLayer?.makeResultsController(EventType.self, predicate: nil, sorted: Sorted(key: "cd_timestamp", ascending: false))
+        resultsController = dataLayer?.makeResultsController(.eventType, filtering: nil, sorting: .timestamp(ascending: false))
         resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }
@@ -41,11 +43,11 @@ class MasterViewController: UITableViewController {
     
     @objc private func insertNewObject() {
         do {
-            try dataLayer?.writableContext.create(UserType.self, completion: { [weak self] storable in
+            try dataLayer?.writableContext.create(.userType, completion: { [weak self] storable in
                 var user = storable
                 user.name = String.random()
                 
-                try? self?.dataLayer?.writableContext.create(EventType.self, completion: { (storable) in
+                try? self?.dataLayer?.writableContext.create(.eventType, completion: { (storable) in
                     var event = storable
                     event.timestamp = Date()
                     event.user = user
