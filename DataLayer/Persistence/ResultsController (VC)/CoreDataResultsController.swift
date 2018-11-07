@@ -27,6 +27,10 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
         return fetchedResultsController?.object(at: indexPath) as? Storable
     }
     
+    var allObjects: [Storable] {
+        return fetchedResultsController?.fetchedObjects as? [Storable] ?? []
+    }
+    
     func objectCount(at section: Int) -> Int {
         guard section < fetchedResultsController?.sections?.count ?? 1 else { return 0 }
         return fetchedResultsController?.sections?[section].numberOfObjects ?? 0

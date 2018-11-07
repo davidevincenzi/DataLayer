@@ -36,14 +36,17 @@ protocol ResultsController {
     /// Model object at the specified index path.
     func object(at indexPath: IndexPath) -> Storable?
     
-    /// Total number of model objects at the specified section.
-    func objectCount(at section: Int) -> Int
+    /// All model objects.
+    var allObjects: [Storable] { get }
     
     
     // MARK: Counts.
     
-    /// Total number of model objects.
+    /// Total number of model objects (at first section).
     var objectCount: Int { get }
+    
+    /// Total number of model objects at the specified section.
+    func objectCount(at section: Int) -> Int
     
     /// Total number of model sections.
     var sectionCount: Int { get }
