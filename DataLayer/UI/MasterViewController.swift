@@ -39,6 +39,12 @@ class MasterViewController: UITableViewController {
         resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }
+        resultsController?.objectChanged = { (object, indexPath, changeType, newIndexPath) in
+            //print("objectChanged: \(object), \(indexPath), \(changeType), \(newIndexPath)")
+        }
+        resultsController?.sectionChanged = { (sectionIndex, changeType) in
+            //print("sectionChanged: \(sectionIndex), \(changeType)")
+        }
     }
     
     @objc private func insertNewObject() {

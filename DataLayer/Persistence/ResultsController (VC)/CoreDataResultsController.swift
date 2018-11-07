@@ -18,7 +18,10 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
     
     // MARK: - ResultsController protocol conformance
     
+    var dataWillChange: (() -> Void)?
     var dataChanged: (() -> Void)?
+    var objectChanged: ((_ object: Any, _ indexPath: IndexPath?, _ changeType: ResultsControllerChangeType, _ newIndexPath: IndexPath?) -> Void)?
+    var sectionChanged: ((_ sectionIndex: Int, _ changeType: ResultsControllerChangeType) -> Void)?
     
     func object(at indexPath: IndexPath) -> Storable? {
         return fetchedResultsController?.object(at: indexPath) as? Storable
@@ -92,8 +95,37 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
         return controller
     }()
     
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        dataWillChange?()
+    }
+    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         dataChanged?()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        objectChanged?(anObject, indexPath, ResultsControllerChangeType(fetchedResultsChangeType: type), newIndexPath)
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        sectionChanged?(sectionIndex, ResultsControllerChangeType(fetchedResultsChangeType: type))
+    }
+    
+}
+
+extension ResultsControllerChangeType {
+    
+    init(fetchedResultsChangeType: NSFetchedResultsChangeType) {
+        switch fetchedResultsChangeType {
+        case .insert:
+            self = .insert
+        case .move:
+            self = .move
+        case .update:
+            self = .update
+        case .delete:
+            self = .delete
+        }
     }
     
 }
