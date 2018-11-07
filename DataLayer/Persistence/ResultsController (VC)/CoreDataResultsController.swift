@@ -14,6 +14,7 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
     var filtering: Filtering<T>?
     var sorting: Sorting<T>?
     var context: ReadableStorageContext
+    var sectionNameKeyPath: String?
     
     // MARK: - ResultsController protocol conformance
     
@@ -23,18 +24,28 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
         return fetchedResultsController?.object(at: indexPath) as? Storable
     }
     
+    func objectCount(at section: Int) -> Int {
+        guard section < fetchedResultsController?.sections?.count ?? 1 else { return 0 }
+        return fetchedResultsController?.sections?[section].numberOfObjects ?? 0
+    }
+    
     var objectCount: Int {
         return fetchedResultsController?.sections?.first?.numberOfObjects ?? 0
+    }
+    
+    var sectionCount: Int {
+        return fetchedResultsController?.sections?.count ?? 1
     }
     
     
     // MARK: - Setup
 
-    init(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, context: ReadableStorageContext) {
+    init(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, context: ReadableStorageContext, sectionNameKeyPath: String? = nil) {
         self.storing = storing
         self.filtering = filtering
         self.sorting = sorting
         self.context = context
+        self.sectionNameKeyPath = sectionNameKeyPath
         
         super.init()
     }
@@ -66,7 +77,7 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
         fetchRequest.fetchBatchSize = 20
         
         // create controller
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: nativeContext, sectionNameKeyPath: nil, cacheName: "Master") as? NSFetchedResultsController<NSFetchRequestResult>
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: nativeContext, sectionNameKeyPath: sectionNameKeyPath, cacheName: "Master") as? NSFetchedResultsController<NSFetchRequestResult>
         controller?.delegate = self
         
         do {
