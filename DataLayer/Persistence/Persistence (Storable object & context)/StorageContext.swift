@@ -60,6 +60,22 @@ struct Storing<T> {
 
 struct Filtering<T> {
     let filter: () -> NSPredicate
+    
+    enum CompoundOperation {
+        case and
+        case or
+    }
+    
+    static func compoundFilters<T>(_ filters: [Filtering<T>], operation: CompoundOperation = .and) -> Filtering<T> {
+        return Filtering<T> {
+            switch operation {
+            case .and:
+                return NSCompoundPredicate(andPredicateWithSubpredicates: filters.map{ $0.filter() } )
+            case .or:
+                return NSCompoundPredicate(orPredicateWithSubpredicates: filters.map{ $0.filter() } )
+            }
+        }
+    }
 }
 
 struct Sorting<T> {
@@ -70,3 +86,4 @@ struct SortingDescriptor {
     var key: String
     var ascending: Bool = true
 }
+

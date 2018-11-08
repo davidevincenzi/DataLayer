@@ -35,7 +35,11 @@ class MasterViewController: UITableViewController {
         }
         
         // setup a results controller
-        resultsController = dataLayer?.makeResultsController(.eventType, filtering: nil, sorting: .timestamp(ascending: false))
+        //  -> filtering
+        let lastDay = Date().addingTimeInterval(-24*60*60)
+        let filters: [Filtering<EventType>] = [.timestamp(largerThan: lastDay), .nonNilUser()]
+        let filter = Filtering<EventType>.compoundFilters(filters, operation: .and)
+        resultsController = dataLayer?.makeResultsController(.eventType, filtering: filter, sorting: .timestamp(ascending: false))
         resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }

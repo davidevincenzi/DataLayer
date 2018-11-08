@@ -58,6 +58,12 @@ extension Filtering where T == EventType {
         }
     }
     
+    static func nonNilUser() -> Filtering<EventType> {
+        return Filtering<EventType> {
+            return NSPredicate(format: "cd_user != nil")
+        }
+    }
+    
 }
 
 extension Sorting where T == EventType {
