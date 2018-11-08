@@ -60,6 +60,12 @@ struct Storing<T> {
 
 struct Filtering<T> {
     let filter: () -> NSPredicate
+}
+
+extension Filtering {
+    func evaluate(with element: T) -> Bool {
+        return filter().evaluate(with: element)
+    }
     
     enum CompoundOperation {
         case and
