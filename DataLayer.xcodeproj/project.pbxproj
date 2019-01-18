@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2824E5C121F231FA00E434BC /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2824E5BF21F231FA00E434BC /* RealmSwift.framework */; };
+		2824E5C221F231FA00E434BC /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2824E5C021F231FA00E434BC /* Realm.framework */; };
 		2889C440217B530C0059F16B /* Storable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C43F217B530C0059F16B /* Storable.swift */; };
 		2889C442217B53BA0059F16B /* StorageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C441217B53BA0059F16B /* StorageContext.swift */; };
 		2889C446217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2889C445217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift */; };
@@ -41,6 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2824E5BF21F231FA00E434BC /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		2824E5C021F231FA00E434BC /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		2889C43F217B530C0059F16B /* Storable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storable.swift; sourceTree = "<group>"; };
 		2889C441217B53BA0059F16B /* StorageContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageContext.swift; sourceTree = "<group>"; };
 		2889C445217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+StorageContext.swift"; sourceTree = "<group>"; };
@@ -76,6 +80,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2824E5C121F231FA00E434BC /* RealmSwift.framework in Frameworks */,
+				2824E5C221F231FA00E434BC /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +95,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2824E5BE21F231FA00E434BC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2824E5C021F231FA00E434BC /* Realm.framework */,
+				2824E5BF21F231FA00E434BC /* RealmSwift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2889C43E217B52AD0059F16B /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -154,6 +169,7 @@
 				6B1E5F3C217475BF00950DC5 /* DataLayer */,
 				6B1E5F56217475C200950DC5 /* DataLayerTests */,
 				6B1E5F3B217475BF00950DC5 /* Products */,
+				2824E5BE21F231FA00E434BC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -480,6 +496,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = DataLayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -497,6 +517,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = DataLayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
