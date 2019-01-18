@@ -10,7 +10,6 @@ import CoreData
 
 class CoreDataDataLayer: NSObject, DataLayer {
     
-    
     // MARK: - Core Data stack
     
     /// Core Data stack container.
@@ -54,7 +53,7 @@ class CoreDataDataLayer: NSObject, DataLayer {
     
     // MARK: - Results Controller
 
-    func makeResultsController<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?) -> ResultsController? {
-        return CoreDataResultsController(storing, filtering: filtering, sorting: sorting, context: mainContext)
+    func makeResultsController<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: [Sorting<T>]?, sectionNameKeyPath: String?, fetchBatchSize: Int?, cacheName: String?) -> ResultsController? {
+        return CoreDataResultsController(storing, filtering: filtering, sorting: sorting, context: mainContext, sectionNameKeyPath: sectionNameKeyPath, fetchBatchSize: fetchBatchSize, cacheName: cacheName)
     }
 }

@@ -12,11 +12,17 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
     
     var storing: Storing<T>
     var filtering: Filtering<T>?
-    var sorting: Sorting<T>?
+    var sorting: [Sorting<T>]?
     var context: ReadableStorageContext
     var sectionNameKeyPath: String?
+    var fetchBatchSize: Int?
+    var cacheName: String?
     
     // MARK: - ResultsController protocol conformance
+    
+    var storageContext: ReadableStorageContext {
+        return context
+    }
     
     var dataWillChange: (() -> Void)?
     var dataChanged: (() -> Void)?
@@ -24,11 +30,17 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
     var sectionChanged: ((_ sectionIndex: Int, _ changeType: ResultsControllerChangeType) -> Void)?
     
     func object(at indexPath: IndexPath) -> Storable? {
+        guard indexPath.section < sectionCount && indexPath.row < objectCount(at: indexPath.section) else { return nil }
         return fetchedResultsController?.object(at: indexPath) as? Storable
     }
     
     var allObjects: [Storable] {
         return fetchedResultsController?.fetchedObjects as? [Storable] ?? []
+    }
+    
+    func indexPath(for object: Storable) -> IndexPath? {
+        guard let object = object as? NSFetchRequestResult else { return nil }
+        return fetchedResultsController?.indexPath(forObject: object)
     }
     
     func objectCount(at section: Int) -> Int {
@@ -46,8 +58,8 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
     
     
     // MARK: - Setup
-
-    init(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, context: ReadableStorageContext, sectionNameKeyPath: String? = nil) {
+    
+    init(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: [Sorting<T>]?, context: ReadableStorageContext, sectionNameKeyPath: String? = nil, fetchBatchSize: Int?, cacheName: String?) {
         self.storing = storing
         self.filtering = filtering
         self.sorting = sorting
@@ -75,16 +87,16 @@ class CoreDataResultsController<T>: NSObject, ResultsController, NSFetchedResult
         fetchRequest.predicate = filtering?.filter()
         
         // sorting
-        if let sort = sorting?.sortDescriptor() {
-            let sortDescriptor = NSSortDescriptor(key: sort.key, ascending: sort.ascending)
-            fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sorting?.map {
+            let sort = $0.sortDescriptor()
+            return NSSortDescriptor(key: sort.key, ascending: sort.ascending)
         }
         
         // set the batch size to a suitable number
-        fetchRequest.fetchBatchSize = 20
+        fetchRequest.fetchBatchSize = fetchBatchSize ?? 20
         
         // create controller
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: nativeContext, sectionNameKeyPath: sectionNameKeyPath, cacheName: "Master") as? NSFetchedResultsController<NSFetchRequestResult>
+        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: nativeContext, sectionNameKeyPath: sectionNameKeyPath, cacheName: cacheName) as? NSFetchedResultsController<NSFetchRequestResult>
         controller?.delegate = self
         
         do {

@@ -16,6 +16,10 @@ enum ResultsControllerChangeType {
 
 protocol ResultsController {
     
+    // MARK: - Context access.
+    var storageContext: ReadableStorageContext { get }
+    
+    
     // MARK: - Data change related.
     
     /// Called when data is about to change.
@@ -39,6 +43,9 @@ protocol ResultsController {
     /// All model objects.
     var allObjects: [Storable] { get }
     
+    /// Index path for the specified model object.
+    func indexPath(for object: Storable) -> IndexPath?
+    
     
     // MARK: Counts.
     
@@ -50,5 +57,5 @@ protocol ResultsController {
     
     /// Total number of model sections.
     var sectionCount: Int { get }
-        
+    
 }
