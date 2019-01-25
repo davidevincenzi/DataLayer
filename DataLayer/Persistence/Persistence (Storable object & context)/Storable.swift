@@ -1,25 +1,14 @@
-//
-//  Storable.swift
-//  DataLayer
-//
-//  Created by Nuno Grilo on 20/10/2018.
-//
 
 import Foundation
 
-///// Umbrella protocol for all storable protocols
-//protocol Storable {
-//
-//}
-
 /// Umbrella protocol for all storable protocols
-protocol Storable: class {
+protocol Storable: JSONUpdateable {
     
     /// Returns the object associated storage context.
     var storageContext: StorageContext? { get }
     
     /// Returns the primary key of the Storable. Default is nil. It should be overridden by the protocol that inherits to Storable.
-    static func primaryKey() -> String?
+    static func primaryProperty() -> PropertyProtocol?
     
     /// Returns a mutable set proxy that provides read-write access to the unordered to-many relationship specified by a given key.
     /// See description of `mutableSetValue(forKey:)` in `NSKeyValueCoding` (`NSManagedObject`)
@@ -27,12 +16,12 @@ protocol Storable: class {
 }
 
 extension Storable {
-    static func primaryKey() -> String? {
+    static func primaryProperty() -> PropertyProtocol? {
         return nil
     }
     
-    func replaceObjects(_ array: [Storable], forKey: String) {
-        let items = self.mutableSetValue(forKey: forKey);
+    func replaceObjects<T, U>(_ array: [Storable], forProperty property: Property<T, U>) {
+        let items = self.mutableSetValue(forKey: property.key);
         items.removeAllObjects()
         items.addObjects(from: array)
     }
@@ -40,7 +29,7 @@ extension Storable {
 
 // MARK: - Access by property.
 
-extension Storable where Self: NSObject {
+extension Storable {
     func object<T, U>(forProperty property: Property<T, U>) -> U? {
         let object = value(forKey: property.key)
         return object as? U

@@ -17,7 +17,7 @@ class MasterViewController: UITableViewController {
         super.viewDidLoad()
                 
         let testDate = Date(timeIntervalSinceReferenceDate: 562588437)
-        let objects = dataLayer!.mainContext.fetch(.eventType,
+        let objects = dataLayer!.mainContext.fetch(.event,
                                                    filtering: .timestamp(largerThan: testDate),
                                                    sorting: .timestamp(ascending: false))
         for object in objects {
@@ -40,7 +40,7 @@ class MasterViewController: UITableViewController {
         let filters: [Filtering<EventType>] = [.timestamp(largerThan: lastDay), .nonNilUser()]
         let filter = Filtering<EventType>.compoundFilters(filters, operation: .and)
         let sort = [Sorting<EventType>.timestamp(ascending: false)]
-        resultsController = dataLayer?.makeResultsController(.eventType, filtering: filter, sorting: sort, sectionNameKeyPath: nil, fetchBatchSize: 200, cacheName: nil)
+        resultsController = dataLayer?.makeResultsController(Storing.event, filtering: filter, sorting: sort, sectionNameKeyPath: nil, fetchBatchSize: 200, cacheName: nil)
         resultsController?.dataChanged = { [weak self] in
             self?.tableView.reloadData()
         }
@@ -53,21 +53,17 @@ class MasterViewController: UITableViewController {
     }
     
     @objc private func insertNewObject() {
-        do {
-            try dataLayer?.writableContext.create(.userType, completion: { [weak self] storable in
-                var user = storable
-                user.name = String.random()
-                
-                try? self?.dataLayer?.writableContext.create(.eventType, completion: { (storable) in
-                    var event = storable
-                    event.timestamp = Date()
-                    event.user = user
-                    
-                    try? self?.dataLayer?.writableContext.saveContext()
-                })
-            })
-        } catch {
-            print("Failed to create a new user & event: \(error)")
+        dataLayer?.mainContext.performInContext { [weak self] in
+            guard let context = self?.dataLayer?.mainContext else { return }
+            
+            let user = context.create(.user)
+            user.name = String.random()
+            
+            let event = context.create(.event)
+            event.timestamp = Date()
+            event.user = user
+            
+            try? context.saveContext()
         }
     }
     
@@ -117,8 +113,8 @@ class MasterViewController: UITableViewController {
         if editingStyle == .delete {
             if let event = resultsController?.object(at: indexPath) {
                 // get managed object identifier from readable context
-                try? dataLayer?.writableContext.delete(event)
-                try? dataLayer?.writableContext.saveContext()
+                dataLayer?.mainContext.delete(event)
+                try? dataLayer?.mainContext.saveContext()
             }
         }
     }

@@ -132,17 +132,9 @@ extension NSManagedObjectContext: WritableStorageContext {
     func saveContext() throws {
         guard hasChanges else { return }
         
-        let contextName = name ?? ""
-        
         do {
             try save()
         } catch let error as NSError {
-//            var severity: MessageSeverity = .error
-//            if error.domain == EncryptedAtomicStoreErrorDomain && error.code == EncryptedAtomicStoreError.disabledError.rawValue {
-//                severity = .warning
-//            }
-//            let message = Message("Could not save context \(contextName)", severity: severity, additionalInfo: ["Error": error.description])
-//            globalDependencies.messageReporter.send(message)
             throw error
         }
     }
@@ -165,24 +157,10 @@ extension NSManagedObjectContext: WritableStorageContext {
                     try parent.save()
                     completion()
                 } catch let error as NSError {
-//                    var severity: MessageSeverity = .error
-//                    if error.domain == EncryptedAtomicStoreErrorDomain && error.code == EncryptedAtomicStoreError.disabledError.rawValue {
-//                        severity = .warning
-//                    }
-//                    let parentContextName = parent.name ?? ""
-//                    let message = Message("Could not save parent context \(parentContextName) of context \(contextName) ", severity: severity, additionalInfo: ["Error": error.description])
-//                    globalDependencies.messageReporter.send(message)
-//                    completion()
                     fatalError("Unable to save context chain: \(error)")
                 }
             }
-        } catch let error as NSError {
-//            var severity: MessageSeverity = .error
-//            if error.domain == EncryptedAtomicStoreErrorDomain && error.code == EncryptedAtomicStoreError.disabledError.rawValue {
-//                severity = .warning
-//            }
-//            let message = Message("Could not save context \(contextName)", severity: severity, additionalInfo: ["Error": error.description])
-//            globalDependencies.messageReporter.send(message)
+        } catch {
             completion()
         }
     }

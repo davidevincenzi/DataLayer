@@ -17,11 +17,15 @@ protocol DataLayer {
     
     // MARK: - Contexts
     
-    /// Main view context (read-only).
-    var mainContext: ReadableStorageContext { get }
+//    /// Main view context (read-only).
+//    var mainContext: ReadableStorageContext { get }
+//
+//    /// Write context (read-write).
+//    var writableContext: StorageContext { get }
     
-    /// Write context (read-write).
-    var writableContext: StorageContext { get }
+    /// Main view context.
+    var mainContext: StorageContext { get }
+    
 }
 
 protocol HasDataLayer {

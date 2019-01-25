@@ -26,28 +26,37 @@ class CoreDataDataLayer: NSObject, DataLayer {
     
     // MARK: - Contexts
     
-    /// The main, read-only context, has the persistent store as parent.
-    /// Automatically merge changes from store.
-    lazy var mainContext: ReadableStorageContext = {
-        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
-        
-        // Merge policy is set to prefer store version over in-memory version (since context is read-only).
-        persistentContainer.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
-        
-        return persistentContainer.viewContext
-    }()
+//    /// The main, read-only context, has the persistent store as parent.
+//    /// Automatically merge changes from store.
+//    lazy var mainContext: ReadableStorageContext = {
+//        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
+//
+//        // Merge policy is set to prefer store version over in-memory version (since context is read-only).
+//        persistentContainer.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
+//
+//        return persistentContainer.viewContext
+//    }()
+//
+//    /// Background context to perform long/write operations.
+//    /// Context saves immediatelly propagate changes to the persistent store.
+//    lazy var writableContext: StorageContext = {
+//        let context = persistentContainer.newBackgroundContext()
+//
+//        // Merge operations should occur on a property basis (`id` attribute)
+//        // and the in memory version “wins” over the persisted one.
+//        // All entities have been modeled with an `id` constraint.
+//        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+//
+//        return context
+//    }()
     
-    /// Background context to perform long/write operations.
-    /// Context saves immediatelly propagate changes to the persistent store.
-    lazy var writableContext: StorageContext = {
-        let context = persistentContainer.newBackgroundContext()
-
-        // Merge operations should occur on a property basis (`id` attribute)
-        // and the in memory version “wins” over the persisted one.
-        // All entities have been modeled with an `id` constraint.
-        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-
-        return context
+    /// The main context, has the persistent store as parent.
+    lazy var mainContext: StorageContext = {
+        let mainManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        mainManagedObjectContext.name = "MainManagedObjectContext"
+        mainManagedObjectContext.persistentStoreCoordinator = persistentContainer.persistentStoreCoordinator
+        mainManagedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return mainManagedObjectContext
     }()
     
     
