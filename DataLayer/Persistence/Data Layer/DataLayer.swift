@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum DataLayerType {
+    case coreData
+    case realm
+}
+
 protocol DataLayer {
     
     // MARK: - Results Controller

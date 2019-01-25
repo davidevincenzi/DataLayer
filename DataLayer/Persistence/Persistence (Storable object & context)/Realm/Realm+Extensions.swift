@@ -1,5 +1,5 @@
 //
-//  CoreData+Extensions.swift
+//  Realm+Extensions.swift
 //  DataLayer
 //
 //  Created by Nuno Grilo on 25/01/2019.
@@ -9,7 +9,7 @@ import Foundation
 
 
 // MARK: Define Data Layer type
-let dataLayerType: DataLayerType = .coreData
+let dataLayerType: DataLayerType = .realm
 
 
 // MARK: - Storable
@@ -35,10 +35,10 @@ extension Storing {
 
 // MARK: - User
 
-extension User: UserType {}
+extension UserRealm: UserType {}
 
 extension EntityName {
-    static var user: String = "User"
+    static var user: String = "UserRealm"
 }
 
 extension Property {
@@ -46,20 +46,20 @@ extension Property {
 }
 extension Property.User where T == UserType, U == String {
     static var id: Property = .init(key: "id")
-    static var remoteID: Property = .init(key: "cd_remote_id")
-    static var name: Property = .init(key: "cd_name")
+    static var remoteID: Property = .init(key: "remoteId")
+    static var name: Property = .init(key: "name")
 }
 extension Property.User where T == UserType, U == EventType {
-    static var events: Property = .init(key: "cd_events")
+    static var events: Property = .init(key: "events")
 }
 
 
 // MARK: - Event
 
-extension Event: EventType {}
+extension EventRealm: EventType {}
 
 extension EntityName {
-    static var event: String = "Event"
+    static var event: String = "EventRealm"
 }
 
 extension Filtering where T == UserType {
@@ -75,12 +75,12 @@ extension Property {
 }
 extension Property.Event where T == EventType, U == String {
     static var id: Property = .init(key: "id")
-    static var remoteID: Property = .init(key: "cd_remote_id")
+    static var remoteID: Property = .init(key: "remoteId")
 }
 extension Property.Event where T == EventType, U == Date {
-    static var timestamp: Property = .init(key: "cd_timestamp")
+    static var timestamp: Property = .init(key: "timestamp")
 }
 extension Property.Event where T == EventType, U == UserType {
-    static var user: Property = .init(key: "cd_user")
+    static var user: Property = .init(key: "user")
 }
 

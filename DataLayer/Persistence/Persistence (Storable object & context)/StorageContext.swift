@@ -157,6 +157,42 @@ extension Filtering {
     }
 }
 
+// Common filtering
+extension Filtering where T == Storable {
+    static func ids<T>(type: Storing<T>, ids: [String]) -> Filtering<T> {
+        return Filtering<T> {
+            guard let primaryKey = type.localPrimaryProperty?.key else { return NSPredicate(value: true) }
+            return NSPredicate(format: "%K IN %@", primaryKey, ids)
+        }
+    }
+    
+    static func id<T>(type: Storing<T>, id: String) -> Filtering<T> {
+        return Filtering<T> {
+            guard let primaryKey = type.localPrimaryProperty?.key else { return NSPredicate(value: true) }
+            return NSPredicate(format: "%K = %@", primaryKey, id)
+        }
+    }
+    
+    static func id<T>(type: Storing<T>, id: Int) -> Filtering<T> {
+        return Filtering<T> {
+            guard let primaryKey = type.localPrimaryProperty?.key else { return NSPredicate(value: true) }
+            return NSPredicate(format: "%K = %d", primaryKey, id)
+        }
+    }
+    
+    static func markedAsDeleted<T>(type: Storing<T>) -> Filtering<T> {
+        return Filtering<T> {
+            return NSPredicate(format: "%K = 1", type.isDeletedProperty.key)
+        }
+    }
+    
+    static func notMarkedAsDeleted<T>(type: Storing<T>) -> Filtering<T> {
+        return Filtering<T> {
+            return NSPredicate(format: "%K != 1", type.isDeletedProperty.key)
+        }
+    }
+}
+
 
 // MARK: - Sorting
 struct Sorting<T> {

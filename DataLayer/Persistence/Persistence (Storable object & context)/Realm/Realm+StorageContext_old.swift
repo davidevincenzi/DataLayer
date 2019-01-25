@@ -1,68 +1,66 @@
 //
-//  NSManagedObjectContext+StorageContext.swift
+//  Realm+StorageContext.swift
 //  DataLayer
 //
-//  Created by Nuno Grilo on 20/10/2018.
+//  Created by Nuno Grilo on 18/01/2019.
 //
 
 import Foundation
 import RealmSwift
 
-// MARK: - ReadableStorageContext
-
 extension Realm: ReadableStorageContext {
     
-    private func realmResults<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?) -> Results<Object> {
-        //var results = objects((T.self as! Object.Type).self)
-        var results = dynamicObjects(storing.entityName)
+    //    func loadObject(withId id: AnyObject, completion: @escaping ((Storable?) -> ())) {
+    //        guard let objectID = id as? NSManagedObjectID else {
+    //            print("`id` is not an `NSManagedObjectID`.")
+    //            completion(nil)
+    //            return
+    //        }
+    //        perform { [weak self] in
+    //            completion(self?.object(with: objectID) as? Storable)
+    //        }
+    //    }
+    //
+    //    func loadObject(withId id: AnyObject) -> Storable? {
+    //        guard let objectID = id as? NSManagedObjectID else {
+    //            return nil
+    //        }
+    //
+    //        return object(with: objectID) as? Storable
+    //    }
+    
+    func loadFirstObject<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?) -> T? {
+        return fetch(storing, filtering: filtering, sorting: sorting, returnsFaults: true).first
+    }
+    
+    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, completion: @escaping (([T]) -> ())) {
+        let objects =  fetch(storing, filtering: filtering, sorting: sorting, returnsFaults: true)
+        completion(objects)
+    }
+    
+    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, propertiesToFetch properties: [PropertyProtocol]?, returnsFaults: Bool) -> [T] {
+        guard let TType = T.self as? Object.Type else { return [] }
+        var results = objects(TType)
         
+        // filtering
         if let predicate = filtering?.filter() {
             results = results.filter(predicate)
         }
+        
+        // `propertiesToFetch`: ignored on Realm
         
         // sorting
         if let sort = sorting?.sortDescriptor() {
             results = results.sorted(byKeyPath: sort.key, ascending: sort.ascending)
         }
         
-        //return results
-        return unsafeBitCast(results, to: Results<Object>.self)
-    }
-    
-    func sections<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, keyPath: String) -> [String] {
-        let results = realmResults(storing, filtering: filtering, sorting: sorting)
+        // `returnsFaults`: ignored on Realm
         
-        //let movies = realm.objects(Movie.self).sorted(by: ["id", true]).distinct(by: ["genre"])
-        let distinctObjects = results.sorted(byKeyPath: keyPath).distinct(by: [keyPath])
-        let sections: [String] = distinctObjects.map { $0.value(forKey: keyPath) as! String }
-        
-        return sections
-    }
-    
-    func storableResults<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?) -> StorableResults {
-        let results = realmResults(storing, filtering: filtering, sorting: sorting)
-        return results
-    }
-    
-    func loadFirstObject<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?) -> T? {
-        return (realmResults(storing, filtering: filtering, sorting: sorting).first as? T)
-    }
-    
-    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, completion: @escaping (([T]) -> ())) {
-        let results = realmResults(storing, filtering: filtering, sorting: sorting)
-        if let objects = Array(results) as? [T] {
-            completion(objects)
-        } else {
-            completion([T]())
-        }
-    }
-    
-    func fetch<T>(_ storing: Storing<T>, filtering: Filtering<T>?, sorting: Sorting<T>?, propertiesToFetch: [PropertyProtocol]?, returnsFaults: Bool) -> [T]  {
-        let results = realmResults(storing, filtering: filtering, sorting: sorting)
-        return (Array(results) as? [T]) ?? [T]()
+        return Array(results) as? [T] ?? []
     }
     
     func performInContext(block: @escaping () -> (), waitUntilFinished: Bool) {
+        // TODO: check if we can do this async also (for `waitUntilFinished`)
         do {
             try write {
                 block()
@@ -73,25 +71,35 @@ extension Realm: ReadableStorageContext {
     }
     
     func count<T>(_ storing: Storing<T>, filtering: Filtering<T>?) -> Int {
-        let results = realmResults(storing, filtering: filtering, sorting: nil)
+        guard let TType = T.self as? Object.Type else { return 0 }
+        var results = objects(TType)
+        
+        if let predicate = filtering?.filter() {
+            results = results.filter(predicate)
+        }
         
         return results.count
     }
 }
 
 // MARK: - WritableStorageContext
-
 extension Realm: WritableStorageContext {
     func create<T>(_ storing: Storing<T>) -> T {
+        guard let TObject = T.self as? Object.Type else { fatalError("Unable to create object of type \(T.self)") }
         do {
-//            beginWrite()
-            //let object = (T.self as! Object.Type).init()
-            let object = dynamicCreate(storing.entityName)
-            add(object)
-//            try commitWrite()
-            return object as! T
+            var object: T!
+            try write {
+                let objectRealm = TObject.init()
+                add(objectRealm)
+                if let obj = objectRealm as? T {
+                    object = obj
+                } else {
+                    fatalError("Unable to create object of type \(T.self)")
+                }
+            }
+            return object
         } catch {
-            fatalError("Unable to create object of type")
+            fatalError("Unable to create object of type \(T.self)")
         }
     }
     
@@ -99,9 +107,9 @@ extension Realm: WritableStorageContext {
         do {
             try commitWrite()
         } catch let error as NSError {
-//            var severity: MessageSeverity = .error
-//            let message = Message("Could not save Realm", severity: severity, additionalInfo: ["Error": error.description])
-//            globalDependencies.messageReporter.send(message)
+            //            var severity: MessageSeverity = .error
+            //            let message = Message("Could not save Realm", severity: severity, additionalInfo: ["Error": error.description])
+            //            globalDependencies.messageReporter.send(message)
             throw error
         }
     }
@@ -133,11 +141,14 @@ extension Realm: WritableStorageContext {
             beginWrite()
         }
         
-        delete(realmResults(storing, filtering: nil, sorting: nil))
+        if let objects = fetch(storing, filtering: nil, sorting: nil, returnsFaults: true) as? [Object] {
+            delete(objects)
+        }
     }
     
-    #warning ("TODO")
     func delete(_ entityName: String, matching: NSPredicate) -> Int {
+        #warning ("TODO")
+        return 0
         //        var count: Int = 0
         //        performAndWait { [weak self] in
         //            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
@@ -155,14 +166,12 @@ extension Realm: WritableStorageContext {
         //            }
         //        }
         //        return count
-        return 0
     }
     
 }
 
-// MARK: - CommonStorageContextOperations
-
-//extension Realm: CommonStorageContextOperations {
+//// MARK: - CommonStorageContextOperations
+//extension NSManagedObjectContext: CommonStorageContextOperations {
 //
 //    // MARK: Private Document
 //
@@ -172,7 +181,7 @@ extension Realm: WritableStorageContext {
 //    }
 //
 //    func createPrivateDocument(name: String?, mimeType: String, revision: RevisionProtocol, room: RoomProtocol, labels: [PrivateDocumentLabelProtocol]?) -> PrivateDocumentProtocol {
-//        let privateDocument = create(PrivateDocument.self)
+//        let privateDocument = create(.privateDocument)
 //        privateDocument.revision = revision
 //        privateDocument.created = Date()
 //        privateDocument.modified = privateDocument.created
@@ -185,7 +194,7 @@ extension Realm: WritableStorageContext {
 //        privateDocument.isLocalObject = true
 //
 //        if let labels = labels, labels.count > 0 {
-//            privateDocument.labelsList = labels
+//            privateDocument.labels = labels
 //            privateDocument.isLocalModifiedObject = true
 //        }
 //
@@ -195,7 +204,7 @@ extension Realm: WritableStorageContext {
 //    // MARK: Private Document Label
 //
 //    func createPrivateDocumentLabel(name: String, room: RoomProtocol) -> PrivateDocumentLabelProtocol {
-//        let label = create(PrivateDocumentLabel.self)
+//        let label = create(.privateDocumentLabel)
 //        label.name = name
 //        label.created = Date()
 //        label.modified = label.created
@@ -209,7 +218,7 @@ extension Realm: WritableStorageContext {
 //    // MARK: Revision
 //
 //    func createFirstRevision() -> RevisionProtocol {
-//        let revision = create(Revision.self)
+//        let revision = create(.revision)
 //        revision.created = Date()
 //        revision.remoteID = NSUUID().uuidString
 //        return revision
@@ -240,9 +249,8 @@ extension Realm: WritableStorageContext {
 //    }
 //
 //    // MARK: Comment
-//
 //    func createComment(thread: CommentThreadProtocol, member: MemberProtocol) -> CommentProtocol {
-//        let newComment = create(Comment.self)
+//        let newComment = create(.comment)
 //        newComment.thread = thread
 //        newComment.created = nil
 //        newComment.localText = nil
@@ -258,7 +266,7 @@ extension Realm: WritableStorageContext {
 //    // MARK: Comment Thread
 //
 //    func createCommentThread(topic: TopicProtocol, roomID: String) -> CommentThreadProtocol {
-//        let newThread = create(CommentThread.self)
+//        let newThread = create(.commentThread)
 //        newThread.created = nil
 //        newThread.remoteID = UUID().uuidString
 //        newThread.topic = topic
@@ -268,11 +276,11 @@ extension Realm: WritableStorageContext {
 //    }
 //
 //    func createCommentThread(topicDocument: TopicDocumentProtocol, documentPage: Int, roomID: String) -> CommentThreadProtocol {
-//        let newThread = create(CommentThread.self)
+//        let newThread = create(.commentThread)
 //        newThread.created = nil
 //        newThread.remoteID = UUID().uuidString
 //        newThread.document = topicDocument
-//        newThread.meeting_document_page = documentPage
+//        newThread.meeting_document_page = NSNumber(value: documentPage)
 //        newThread.room_id = roomID
 //
 //        return newThread
@@ -281,20 +289,20 @@ extension Realm: WritableStorageContext {
 //    // MARK: Hint
 //
 //    func createHint(id: NSNumber, alreadyShown: Bool) -> HintProtocol {
-//        let hint = create(Hint.self)
-//        hint.id = id.intValue
-//        hint.has_been_shown = alreadyShown
+//        let hint = create(.hint)
+//        hint.id = id
+//        hint.has_been_shown = alreadyShown as NSNumber
 //
 //        return hint
 //    }
 //
 //    // MARK: User State
 //
-//    func findAllNonExpiredUserStates<T: UserStateType>(type: T, value: String?) -> [UserStateProtocol] {
+//    func findAllNonExpiredUserStates<T: UserStateType>(type: T, value: String?, returnsFaults: Bool) -> [UserStateProtocol] {
 //        let filtering = Filtering<UserStateProtocol>.userStateFiltering(names: [type.userStateName],
 //                                                                        expiry: Date(),
 //                                                                        value: value)
-//        let userStates = fetch(.userState, filtering: filtering, sorting: nil)
+//        let userStates = fetch(.userState, filtering: filtering, sorting: nil, returnsFaults: returnsFaults)
 //        return userStates
 //    }
 //
@@ -313,43 +321,43 @@ extension Realm: StorageContextObserver {
     
     private func addObserver<T>(type: T.Type, forName notificationName: NSNotification.Name, callback: @escaping (_ insertedObjects: [T], _ updatedObjects: [T], _ deletedObjects: [T]) -> Void) -> Any {
         #warning ("TODO")
+        return false
         //        return NotificationCenter.default.addObserver(forName: notificationName,
-        //                                    object: self,
-        //                                    queue: nil) { (notification) in
-        //                                        var filteredInsertedObjects = [T]()
-        //                                        if let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> {
-        //                                            for object in insertedObjects {
-        //                                                if let matchingItem = object as? T {
-        //                                                    filteredInsertedObjects.append(matchingItem)
-        //                                                }
-        //                                            }
-        //                                        }
+        //                                                      object: self,
+        //                                                      queue: nil) { (notification) in
+        //                                                        var filteredInsertedObjects = [T]()
+        //                                                        if let insertedObjects = notification.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject> {
+        //                                                            for object in insertedObjects {
+        //                                                                if let matchingItem = object as? T {
+        //                                                                    filteredInsertedObjects.append(matchingItem)
+        //                                                                }
+        //                                                            }
+        //                                                        }
         //
-        //                                        var filteredUpdatedObjects = [T]()
-        //                                        if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
-        //                                            for object in updatedObjects {
-        //                                                if let matchingItem = object as? T {
-        //                                                    filteredUpdatedObjects.append(matchingItem)
-        //                                                }
-        //                                            }
-        //                                        }
+        //                                                        var filteredUpdatedObjects = [T]()
+        //                                                        if let updatedObjects = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+        //                                                            for object in updatedObjects {
+        //                                                                if let matchingItem = object as? T {
+        //                                                                    filteredUpdatedObjects.append(matchingItem)
+        //                                                                }
+        //                                                            }
+        //                                                        }
         //
-        //                                        var filteredDeletedObjects = [T]()
-        //                                        if let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject> {
-        //                                            for object in deletedObjects {
-        //                                                if let matchingItem = object as? T {
-        //                                                    filteredDeletedObjects.append(matchingItem)
-        //                                                }
-        //                                            }
-        //                                        }
+        //                                                        var filteredDeletedObjects = [T]()
+        //                                                        if let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject> {
+        //                                                            for object in deletedObjects {
+        //                                                                if let matchingItem = object as? T {
+        //                                                                    filteredDeletedObjects.append(matchingItem)
+        //                                                                }
+        //                                                            }
+        //                                                        }
         //
-        //                                        if filteredInsertedObjects.count > 0 ||
-        //                                            filteredUpdatedObjects.count > 0 ||
-        //                                            filteredDeletedObjects.count > 0 {
-        //                                            callback(filteredInsertedObjects, filteredUpdatedObjects, filteredDeletedObjects)
-        //                                        }
+        //                                                        if filteredInsertedObjects.count > 0 ||
+        //                                                            filteredUpdatedObjects.count > 0 ||
+        //                                                            filteredDeletedObjects.count > 0 {
+        //                                                            callback(filteredInsertedObjects, filteredUpdatedObjects, filteredDeletedObjects)
+        //                                                        }
         //        }
-        return ""
     }
     
     private func notificationName(for observationType: StorageContextObservationType) -> NSNotification.Name {
