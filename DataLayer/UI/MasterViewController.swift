@@ -45,10 +45,10 @@ class MasterViewController: UITableViewController {
             self?.tableView.reloadData()
         }
         resultsController?.objectChanged = { (object, indexPath, changeType, newIndexPath) in
-            //print("objectChanged: \(object), \(indexPath), \(changeType), \(newIndexPath)")
+            print("objectChanged: \(object), \(indexPath), \(changeType), \(newIndexPath)")
         }
         resultsController?.sectionChanged = { (sectionIndex, changeType) in
-            //print("sectionChanged: \(sectionIndex), \(changeType)")
+            print("sectionChanged: \(sectionIndex), \(changeType)")
         }
     }
     
@@ -57,9 +57,13 @@ class MasterViewController: UITableViewController {
             guard let context = self?.dataLayer?.mainContext else { return }
             
             let user = context.create(.user)
+            user.id = UUID().uuidString
+            user.remoteId = UUID().uuidString
             user.name = String.random()
             
             let event = context.create(.event)
+            event.id = UUID().uuidString
+            event.remoteId = UUID().uuidString
             event.timestamp = Date()
             event.user = user
             

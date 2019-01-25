@@ -15,7 +15,7 @@
 import Foundation
 import RealmSwift
 
-class RealmResultsController<T: Object>: NSObject, ResultsController {
+class RealmResultsController<T>: NSObject, ResultsController {
     
     var storing: Storing<T>
     var filtering: Filtering<T>?
@@ -31,7 +31,7 @@ class RealmResultsController<T: Object>: NSObject, ResultsController {
         return context
     }
 
-    private var results: Results<T>?
+//    private var results: Results<Object>?
     private var observerToken: NotificationToken?
 
     var dataWillChange: (() -> Void)?
@@ -41,7 +41,7 @@ class RealmResultsController<T: Object>: NSObject, ResultsController {
 
     func object(at indexPath: IndexPath) -> Storable? {
         guard indexPath.section < sectionCount && indexPath.row < objectCount(at: indexPath.section) else { return nil }
-        return results?[indexPath.row] as? Storable
+        return resultsController?[indexPath.row] as? Storable
     }
 
     var allObjects: [Storable] {
@@ -50,8 +50,9 @@ class RealmResultsController<T: Object>: NSObject, ResultsController {
     }
 
     func indexPath(for object: Storable) -> IndexPath? {
-        guard let object = object as? T else { return nil }
-        guard let row = resultsController?.index(of: object) else { return nil }
+        guard let objectT = object as? T else { return nil }
+        guard let objectR = objectT as? Object else { return nil }
+        guard let row = resultsController?.index(of: objectR) else { return nil }
 
         return IndexPath(row: row, section: 0)
     }
@@ -90,13 +91,14 @@ class RealmResultsController<T: Object>: NSObject, ResultsController {
 
     // MARK: - Fetched results controller
 
-    private lazy var resultsController: Results<T>? = {
+    private lazy var resultsController: Results<Object>? = {
         guard let nativeContext = context as? Realm else {
             print("Unresolved error: `context` is not a `Realm`!")
             return nil
         }
 
-        var results = nativeContext.objects(T.self)
+        //var results = nativeContext.objects(T.self)
+        var results = nativeContext.dynamicObjects(storing.entityName)
 
         // filtering
         if let predicate = filtering?.filter() {
@@ -118,7 +120,8 @@ class RealmResultsController<T: Object>: NSObject, ResultsController {
         // notifications
         observerToken = registerForNotifications(results)
         
-        return results
+        //return results
+        return unsafeBitCast(results, to: Results<Object>.self)
     }()
     
     private func registerForNotifications<T>(_ results: Results<T>) -> NotificationToken {

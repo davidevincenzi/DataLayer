@@ -84,11 +84,11 @@ extension Realm: ReadableStorageContext {
 extension Realm: WritableStorageContext {
     func create<T>(_ storing: Storing<T>) -> T {
         do {
-//            beginWrite()
+            //beginWrite()
             //let object = (T.self as! Object.Type).init()
             let object = dynamicCreate(storing.entityName)
             add(object)
-//            try commitWrite()
+            //try commitWrite()
             return object as! T
         } catch {
             fatalError("Unable to create object of type")
@@ -102,6 +102,7 @@ extension Realm: WritableStorageContext {
 //            var severity: MessageSeverity = .error
 //            let message = Message("Could not save Realm", severity: severity, additionalInfo: ["Error": error.description])
 //            globalDependencies.messageReporter.send(message)
+            print(error)
             throw error
         }
     }

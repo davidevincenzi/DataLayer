@@ -45,19 +45,28 @@ class DetailViewController: UIViewController {
     }
     
     @IBAction func backgroundButtonAction(_ sender: Any) {
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            self?.detailItem?.storageContext?.performInContext {
-                print("Date: \(String(describing: self?.detailItem?.timestamp))")
-            }
-        }
+        // FIXME: Realm-only: `performInContext` doesn't work as expected (not executed in proper thread)
+        print("Date: \(String(describing: detailItem?.timestamp))")
+        
+//        DispatchQueue.global(qos: .background).async { [weak self] in
+//            self?.detailItem?.storageContext?.performInContext {
+//                print("Date: \(String(describing: self?.detailItem?.timestamp))")
+//            }
+//        }
     }
     
     @IBAction func updateTimestampAndRefresh(_ sender: Any) {
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            self?.detailItem?.storageContext?.performInContext {
-                self?.detailItem?.timestamp = Date()
-            }
+        // FIXME: Realm-only: `performInContext` doesn't work as expected (not executed in proper thread)
+        detailItem?.storageContext?.performInContext { [weak self] in
+            self?.detailItem?.timestamp = Date()
         }
+        
+//        DispatchQueue.global(qos: .background).async { [weak self] in
+//            self?.detailItem?.storageContext?.performInContext {
+//                self?.detailItem?.timestamp = Date()
+//            }
+//        }
+        
         configureView()
     }
 }
