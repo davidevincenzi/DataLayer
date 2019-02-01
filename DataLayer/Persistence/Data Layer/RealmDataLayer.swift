@@ -19,8 +19,8 @@ class RealmDataLayer: NSObject, DataLayer {
     }()
     
     func uniqueBackgroundContext(_ debugName: String) -> StorageContext {
-        let realm = try! Realm()
-        return realm
+        // TODO: this may not work: a `Realm` must be confined to the thread in which was created!
+        return try! Realm(configuration: (mainContext as! Realm).configuration)
     }
     
     // MARK: - Results Controller
