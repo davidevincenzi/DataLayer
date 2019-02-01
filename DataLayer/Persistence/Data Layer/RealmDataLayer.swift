@@ -18,6 +18,10 @@ class RealmDataLayer: NSObject, DataLayer {
         return try! Realm()
     }()
     
+    func uniqueBackgroundContext(_ debugName: String) -> StorageContext {
+        let realm = try! Realm()
+        return realm
+    }
     
     // MARK: - Results Controller
     

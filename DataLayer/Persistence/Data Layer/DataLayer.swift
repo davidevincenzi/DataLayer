@@ -31,6 +31,9 @@ protocol DataLayer {
     /// Main view context.
     var mainContext: StorageContext { get }
     
+    /// Unique backround context (always a new context instance).
+    func uniqueBackgroundContext(_ debugName: String) -> StorageContext
+    
 }
 
 protocol HasDataLayer {

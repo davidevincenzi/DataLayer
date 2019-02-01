@@ -59,6 +59,17 @@ class CoreDataDataLayer: NSObject, DataLayer {
         return mainManagedObjectContext
     }()
     
+    /// Unique background context (always a new instance) to perform long/write operations.
+    func uniqueBackgroundContext(_ debugName: String) -> StorageContext {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.name = debugName
+        context.parent = (mainContext as! NSManagedObjectContext)
+        context.undoManager = nil
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
+    }
+
+    
     
     // MARK: - Results Controller
 
