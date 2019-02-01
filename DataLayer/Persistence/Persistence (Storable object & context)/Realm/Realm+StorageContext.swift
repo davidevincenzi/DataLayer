@@ -64,9 +64,10 @@ extension Realm: ReadableStorageContext {
     
     func performInContext(block: @escaping () -> (), waitUntilFinished: Bool) {
         do {
-            try write {
-                block()
+            if isInWriteTransaction == false {
+                beginWrite()
             }
+            block()
         } catch {
             #warning ("do something to catch the error")
         }
@@ -84,11 +85,11 @@ extension Realm: ReadableStorageContext {
 extension Realm: WritableStorageContext {
     func create<T>(_ storing: Storing<T>) -> T {
         do {
-            //beginWrite()
-            //let object = (T.self as! Object.Type).init()
+            if isInWriteTransaction == false {
+                beginWrite()
+            }
             let object = dynamicCreate(storing.entityName)
             add(object)
-            //try commitWrite()
             return object as! T
         } catch {
             fatalError("Unable to create object of type")
