@@ -69,6 +69,7 @@ extension Realm: ReadableStorageContext {
             }
             block()
         } catch {
+            if isInWriteTransaction { cancelWrite() }
             #warning ("do something to catch the error")
         }
     }
@@ -92,13 +93,14 @@ extension Realm: WritableStorageContext {
             add(object)
             return object as! T
         } catch {
+            if isInWriteTransaction { cancelWrite() }
             fatalError("Unable to create object of type")
         }
     }
     
     func saveContext() throws {
         do {
-            try commitWrite()
+            if isInWriteTransaction { try commitWrite() }
         } catch let error as NSError {
 //            var severity: MessageSeverity = .error
 //            let message = Message("Could not save Realm", severity: severity, additionalInfo: ["Error": error.description])
@@ -109,7 +111,7 @@ extension Realm: WritableStorageContext {
     }
     
     func saveContextChain(completion: @escaping ()->() ) {
-        try? commitWrite()
+        if isInWriteTransaction { try? commitWrite() }
     }
     
     func updateAll<T>(_ storing: Storing<T>, filtering: Filtering<T>?, completion: @escaping ((T) -> ())) {
