@@ -97,6 +97,23 @@ extension NSManagedObjectContext: ReadableStorageContext {
         }
     }
     
+    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ()) {
+        // get object references (on current thread)
+        let refs: [NSManagedObjectID] = objects.compactMap {
+            guard let obj = $0 as? NSManagedObject else { return nil }
+            return obj.objectID
+        }
+        
+        // on a background thread...
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            self?.perform {
+                let cdObjects = refs.compactMap { self?.object(with: $0) }
+                // call block with objects valid for this thread
+                block(cdObjects as? [Storable] ?? [])
+            }
+        }
+    }
+    
     func count<T>(_ storing: Storing<T>, filtering: Filtering<T>?) -> Int {
         let entityName = storing.entityName
         

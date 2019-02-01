@@ -74,6 +74,31 @@ extension Realm: ReadableStorageContext {
         }
     }
     
+    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ()) {
+        // get object references (on current thread)
+        let refs: [ThreadSafeReference<Object>] = objects.compactMap {
+            guard let obj = $0 as? Object else { return nil }
+            return ThreadSafeReference<Object>(to: obj)
+        }
+        let config = configuration
+        
+        // on a background thread...
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let realm = try? Realm(configuration: config)
+                    let realmObjects = refs.compactMap { realm?.resolve($0) }
+                    try realm?.write {
+                        // call block with objects valid for this thread
+                        block(realmObjects as? [Storable] ?? [])
+                    }
+                } catch {
+                    #warning ("do something to catch the error")
+                }
+            }
+        }
+    }
+    
     func count<T>(_ storing: Storing<T>, filtering: Filtering<T>?) -> Int {
         let results = realmResults(storing, filtering: filtering, sorting: nil)
         
