@@ -24,7 +24,7 @@ class RealmDataLayer: NSObject, DataLayer {
         return try! Realm(configuration: config)
     }
     
-    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ()) {
+    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> (), completion: (() -> Void)?) {
         // get object references (on current thread)
         let refs: [ThreadSafeReference<Object>] = objects.compactMap {
             guard let obj = $0 as? Object else { return nil }
@@ -49,6 +49,14 @@ class RealmDataLayer: NSObject, DataLayer {
                     }
                 } catch {
                     #warning ("do something to catch the error")
+                }
+                
+                // call completion closure
+                if let completion = completion {
+                    DispatchQueue.main.async { [weak self] in
+                        (self?.mainContext as? Realm)?.refresh()
+                        completion()
+                    }
                 }
             }
         }

@@ -13,7 +13,7 @@
 		2801424121FB7BCF00C058ED /* EventRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2801424021FB7BCF00C058ED /* EventRealm.swift */; };
 		2801424321FB7BD600C058ED /* UserRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2801424221FB7BD600C058ED /* UserRealm.swift */; };
 		2801424821FB7F0900C058ED /* Realm+StorageContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2824E5CA21F247B500E434BC /* Realm+StorageContext.swift */; };
-		281417FA2206230800191DA8 /* Realm+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2801423C21FB7B3A00C058ED /* Realm+Extensions.swift */; };
+		281417FC220628B200191DA8 /* Realm+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2801423C21FB7B3A00C058ED /* Realm+Extensions.swift */; };
 		2824E5C121F231FA00E434BC /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2824E5BF21F231FA00E434BC /* RealmSwift.framework */; };
 		2824E5C221F231FA00E434BC /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2824E5C021F231FA00E434BC /* Realm.framework */; };
 		2824E5C721F2474900E434BC /* NSManagedObject+Storable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2824E5C621F2474900E434BC /* NSManagedObject+Storable.swift */; };
@@ -396,6 +396,7 @@
 				2889C456217DDA770059F16B /* RealmResultsController.swift in Sources */,
 				6B1E5F632174764600950DC5 /* DataLayer.swift in Sources */,
 				2889C440217B530C0059F16B /* Storable.swift in Sources */,
+				281417FC220628B200191DA8 /* Realm+Extensions.swift in Sources */,
 				2889C446217B571B0059F16B /* NSManagedObjectContext+StorageContext.swift in Sources */,
 				2889C448217B59090059F16B /* Errors.swift in Sources */,
 				2824E5C921F2475B00E434BC /* Object+Storable.swift in Sources */,
@@ -405,7 +406,6 @@
 				2801423521FB75B800C058ED /* RealmDataLayer.swift in Sources */,
 				2889C442217B53BA0059F16B /* StorageContext.swift in Sources */,
 				2801424821FB7F0900C058ED /* Realm+StorageContext.swift in Sources */,
-				281417FA2206230800191DA8 /* Realm+Extensions.swift in Sources */,
 				6B1E5F41217475BF00950DC5 /* DataLayer.xcdatamodeld in Sources */,
 				2801423B21FB7ACD00C058ED /* Results+Storable.swift in Sources */,
 				2801424121FB7BCF00C058ED /* EventRealm.swift in Sources */,

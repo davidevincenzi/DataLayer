@@ -73,7 +73,7 @@ class CoreDataDataLayer: NSObject, DataLayer {
         return DispatchQueue(label: "Data Layer Background Queue", qos: .background)
     }()
     
-    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ()) {
+    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> (), completion: (() -> Void)?) {
         // get object references (on current thread)
         let refs: [NSManagedObjectID] = objects.compactMap {
             guard let obj = $0 as? NSManagedObject else { return nil }
@@ -98,6 +98,13 @@ class CoreDataDataLayer: NSObject, DataLayer {
                     try context.save()
                 } catch {
                     #warning ("do something to catch the error")
+                }
+                
+                // call completion closure
+                if let completion = completion {
+                    DispatchQueue.main.async {
+                        completion()
+                    }
                 }
             }
         }

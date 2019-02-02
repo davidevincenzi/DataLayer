@@ -68,10 +68,10 @@ class DetailViewController: UIViewController {
 //        }
         
         // NEW API: works for both CoreData & Realm
-        dataLayer?.performInBackground([detailItem]) { objects in
+        dataLayer?.performInBackground([detailItem], block: { objects in
             guard let detailItem = objects.first as? EventType else { return }
             print("Date: \(String(describing: detailItem.timestamp))")
-        }
+        })
     }
     
     @IBAction func updateTimestampAndRefresh(_ sender: Any) {
@@ -99,12 +99,14 @@ class DetailViewController: UIViewController {
 //        }
         
         // NEW API: works for both CoreData & Realm
-        dataLayer?.performInBackground([detailItem]) { objects in
+        dataLayer?.performInBackground([detailItem], block: { objects in
             guard let detailItem = objects.first as? EventType else { return }
             detailItem.timestamp = Date()
-        }
+        }, completion: { [weak self] in
+            self?.configureView()
+        })
         
-        configureView()
+        
     }
 }
 
