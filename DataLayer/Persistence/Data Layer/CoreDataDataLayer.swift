@@ -68,7 +68,40 @@ class CoreDataDataLayer: NSObject, DataLayer {
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         return context
     }
-
+    
+    private lazy var backgroundQueue: DispatchQueue = {
+        return DispatchQueue(label: "Data Layer Background Queue", qos: .background)
+    }()
+    
+    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ()) {
+        // get object references (on current thread)
+        let refs: [NSManagedObjectID] = objects.compactMap {
+            guard let obj = $0 as? NSManagedObject else { return nil }
+            return obj.objectID
+        }
+        
+        // create a new background context
+        let context = uniqueBackgroundContext("Data Layer Background Context")
+        
+        // and perform work on a background thread...
+        backgroundQueue.async {
+            context.performInContext {
+                guard let context = context as? NSManagedObjectContext else { return }
+                let cdObjects = refs.compactMap { context.object(with: $0) }
+                
+                // call block with objects valid for this thread
+                block(cdObjects as? [Storable] ?? [])
+                
+                // changes done on this bg context are merged into the main
+                // context when we save
+                do {
+                    try context.save()
+                } catch {
+                    #warning ("do something to catch the error")
+                }
+            }
+        }
+    }
     
     
     // MARK: - Results Controller

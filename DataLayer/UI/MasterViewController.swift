@@ -83,6 +83,7 @@ class MasterViewController: UITableViewController {
             if let indexPath = tableView.indexPathForSelectedRow,
                let object = resultsController?.object(at: indexPath) as? EventType {
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                controller.dataLayer = dataLayer
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true

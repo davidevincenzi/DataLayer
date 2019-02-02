@@ -12,6 +12,8 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     @IBOutlet weak var userLabel: UILabel!
     
+    var dataLayer: DataLayer?
+    
 
     func configureView() {
         // Update the user interface for the detail item.
@@ -66,7 +68,7 @@ class DetailViewController: UIViewController {
 //        }
         
         // NEW API: works for both CoreData & Realm
-        detailItem?.storageContext?.performInBackground([detailItem]) { objects in
+        dataLayer?.performInBackground([detailItem]) { objects in
             guard let detailItem = objects.first as? EventType else { return }
             print("Date: \(String(describing: detailItem.timestamp))")
         }
@@ -97,7 +99,7 @@ class DetailViewController: UIViewController {
 //        }
         
         // NEW API: works for both CoreData & Realm
-        detailItem?.storageContext?.performInBackground([detailItem]) { objects in
+        dataLayer?.performInBackground([detailItem]) { objects in
             guard let detailItem = objects.first as? EventType else { return }
             detailItem.timestamp = Date()
         }

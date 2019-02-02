@@ -34,6 +34,9 @@ protocol DataLayer {
     /// Unique backround context (always a new context instance).
     func uniqueBackgroundContext(_ debugName: String) -> StorageContext
     
+    /// Perform a task in context, without waiting for the task to finish.
+    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ())
+    
 }
 
 protocol HasDataLayer {
@@ -44,6 +47,10 @@ extension DataLayer {
 
     func makeResultsController<T>(_ storing: Storing<T>, filtering: Filtering<T>? = nil, sorting: [Sorting<T>]? = nil, sectionNameKeyPath: String? = nil, fetchBatchSize: Int? = 20, cacheName: String? = nil) -> ResultsController? {
         return makeResultsController(storing, filtering: filtering, sorting: sorting, sectionNameKeyPath: sectionNameKeyPath, fetchBatchSize: fetchBatchSize, cacheName: cacheName)
+    }
+    
+    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ()) {
+        performInBackground(objects, block: block)
     }
 
 }

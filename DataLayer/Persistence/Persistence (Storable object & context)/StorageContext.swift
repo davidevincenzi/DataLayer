@@ -45,9 +45,6 @@ protocol ReadableStorageContext {
     /// Perform a task in context, without waiting for the task to finish.
     func performInContext(block: @escaping () -> ())
     
-    /// Perform a task in context, without waiting for the task to finish.
-    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ())
-    
     /// Synchronously return the count of matching objects
     func count<T>(_ storing: Storing<T>, filtering: Filtering<T>?) -> Int
 }
@@ -70,10 +67,6 @@ extension ReadableStorageContext {
     
     func performInContext(block: @escaping () -> ()) {
         performInContext(block: block, waitUntilFinished: false)
-    }
-    
-    func performInBackground(_ objects: [Storable?], block: @escaping ([Storable?]) -> ()) {
-        performInBackground(objects, block: block)
     }
     
     func count<T>(_ storing: Storing<T>, filtering: Filtering<T>? = nil) -> Int {
